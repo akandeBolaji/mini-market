@@ -17,3 +17,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::prefix('admin')->group(function () {
+    Route::post('login', 'AdminController@login');
+    Route::get('refresh', 'AdminController@refresh');
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('admin', 'AdminController@dashboard');
+        Route::post('logout', 'AdminController@logout');
+    });
+});
