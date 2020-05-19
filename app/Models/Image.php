@@ -9,4 +9,9 @@ class Image extends Model
     protected $fillable = [
         'url'
     ];
+
+    public function market()
+    {
+        return $this->belongsTo(Market::class);
+    }
 }

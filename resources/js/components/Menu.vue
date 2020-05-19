@@ -1,0 +1,49 @@
+<template>
+    <nav id="nav">
+        <ul>
+            <!--UNLOGGED-->
+            <li v-if="!$auth.check()" v-for="(route, key) in routes.unlogged" v-bind:key="route.path">
+                <router-link  :to="{ name : route.path }" :key="key">
+                    {{route.name}}
+                </router-link>
+            </li>
+            <!--LOGGED Admin-->
+            <li v-if="$auth.check()" v-for="(route, key) in routes.user" v-bind:key="route.path">
+                <router-link  :to="{ name : route.path }" :key="key">
+                    {{route.name}}
+                </router-link>
+            </li>
+            <!--LOGOUT-->
+            <li v-if="$auth.check()">
+                <a href="#" @click.prevent="$auth.logout()">Logout</a>
+            </li>
+        </ul>
+    </nav>
+</template>
+<script>
+  export default {
+    data() {
+      return {
+        routes: {
+          // UNLOGGED
+          unlogged: [
+            {
+              name: 'Login',
+              path: 'login'
+            }
+          ],
+          // LOGGED ADMIN
+          user: [
+            {
+              name: 'Dashboard',
+              path: 'dashboard'
+            }
+          ],
+        }
+      }
+    },
+    mounted() {
+      //
+    }
+  }
+</script>
