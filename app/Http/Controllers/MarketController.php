@@ -6,6 +6,7 @@ use App\Http\Requests\MarketRequest;
 use App\Http\Requests\SearchMarketRequest;
 use App\Services\CreateMarketService;
 use App\Services\GetMarketService;
+use App\Services\SearchMarketService;
 use Illuminate\Http\Request;
 
 class MarketController extends Controller
@@ -24,7 +25,8 @@ class MarketController extends Controller
 
     public function searchMarket(SearchMarketRequest $request)
     {
-
+        $markets = (new SearchMarketService())->run($request);
+        return response()->json(['error' => false, 'data' => $markets]);
     }
 
     public function show(Market $market)
