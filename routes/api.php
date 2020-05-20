@@ -22,6 +22,8 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+Route::post('search', 'MarketController@searchMarket')->name('search.markets');
+
 Route::prefix('admin')->group(function () {
     Route::post('login', 'AdminController@login');
     Route::get('refresh', 'AdminController@refresh');
