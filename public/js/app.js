@@ -5125,7 +5125,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this.address = place.formatted_address;
     });
   },
-  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(["getAllPosts"])), {}, {
+  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(["getAllMarkets"])), {}, {
     checkAddress: function checkAddress(address) {//console.log('auto', this.autocomplete);
     },
     updateImageList: function updateImageList(file) {
@@ -5162,7 +5162,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           "Content-Type": "multipart/form-data"
         }
       }).then(function (res) {
-        _this2.title = _this2.body = "";
+        _this2.name = _this2.description = _this2.address = _this2.category = "";
         _this2.status = true;
 
         _this2.showNotification("Market Successfully Created");
@@ -5177,8 +5177,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         that.getAllMarkets();
         that.componentKey += 1;
-      }).error(function (error) {
-        console.log(error.response.data);
       });
     },
     validateForm: function validateForm() {

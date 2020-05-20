@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
   <!-- Styles -->
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">

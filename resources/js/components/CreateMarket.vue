@@ -142,7 +142,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions(["getAllPosts"]),
+    ...mapActions(["getAllMarkets"]),
     checkAddress(address) {
         //console.log('auto', this.autocomplete);
     },
@@ -176,7 +176,7 @@ export default {
           headers: { "Content-Type": "multipart/form-data" }
         })
         .then(res => {
-          this.title = this.body = "";
+          this.name = this.description = this.address = this.category = "";
           this.status = true;
           this.showNotification("Market Successfully Created");
           this.isCreatingPost = false;
@@ -188,9 +188,6 @@ export default {
            */
           that.getAllMarkets();
           that.componentKey += 1;
-        })
-        .error(error => {
-            console.log(error.response.data);
         });
     },
     validateForm() {
