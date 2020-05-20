@@ -104,8 +104,8 @@
 import { setTimeout } from "timers";
 import { mapState, mapActions } from "vuex";
 export default {
-  name: "create-post",
-  props: ["posts"],
+  name: "create-market",
+  props: ["markets"],
   data() {
     return {
       dialogImageUrl: "",

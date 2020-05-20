@@ -5088,8 +5088,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "create-post",
-  props: ["posts"],
+  name: "create-market",
+  props: ["markets"],
   data: function data() {
     return {
       dialogImageUrl: "",
@@ -5339,23 +5339,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       lat: 0,
       lng: 0,
-      type: "",
+      search: '',
+      type: "Name",
       radius: "",
-      places: []
+      markets: [],
+      status_msg: ''
     };
   },
   computed: {
     coordinates: function coordinates() {
-      return "".concat(this.lat, ", ").concat(this.lng);
+      //return `${this.lat}, ${this.lng}`;
+      return null;
     }
   },
+  mounted: function mounted() {
+    this.getUserLocation();
+  },
   methods: {
-    locatorButtonPressed: function locatorButtonPressed() {
+    getUserLocation: function getUserLocation() {
       var _this = this;
 
       navigator.geolocation.getCurrentPosition(function (position) {
@@ -5365,24 +5389,58 @@ __webpack_require__.r(__webpack_exports__);
         console.log("Error getting location");
       });
     },
-    findCloseBuyButtonPressed: function findCloseBuyButtonPressed() {
+    findMarket: function findMarket(e) {
       var _this2 = this;
 
-      var URL = "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".concat(this.lat, ",").concat(this.lng, "&type=").concat(this.type, "&radius=").concat(this.radius * 1000, "&key=").concat(key);
-      axios.get(URL).then(function (response) {
-        _this2.places = response.data.results;
+      e.preventDefault();
+
+      if (!this.validateForm()) {
+        return false;
+      }
+
+      api.post("/search", {
+        'search': this.search,
+        'type': this.type,
+        'lat': this.lat,
+        'long': this.lng
+      }).then(function (res) {
+        _this2.markets = res.data;
 
         _this2.$emit('addToMap', {
           'lat': _this2.lat,
           'lng': _this2.lng,
-          'places': _this2.places
+          'markets': _this2.markets
         });
-
-        _this2.addLocationsToGoogleMaps();
       })["catch"](function (error) {
+        _this2.showNotification("A server error");
+
         console.log(error.message);
       });
+    },
+    validateForm: function validateForm() {
+      //no vaildation for images - it is needed
+      if (!this.type) {
+        this.status = false;
+        this.showNotification("Type cannot be empty");
+        return false;
+      }
+
+      if (this.type != 'Nearest' && !this.search) {
+        this.status = false;
+        this.showNotification("Search cannot be empty");
+        return false;
+      }
+
+      return true;
     }
+  },
+  showNotification: function showNotification(message) {
+    var _this3 = this;
+
+    this.status_msg = message;
+    setTimeout(function () {
+      _this3.status_msg = "";
+    }, 3000);
   }
 });
 
@@ -5453,7 +5511,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   components: {
-    searchMarket: searchMarket
+    searchMarket: _components_SearchMarket_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   methods: {
     addLocationsToGoogleMaps: function addLocationsToGoogleMaps(data) {
@@ -5464,12 +5522,12 @@ __webpack_require__.r(__webpack_exports__);
       });
       var infowindow = new google.maps.InfoWindow();
       google.maps.event.addListener(marker, "click", function () {
-        infowindow.setContent("<div class=\"ui header\">".concat(place.name, "</div><p>").concat(place.vicinity, "</p>"));
+        infowindow.setContent("<div class=\"ui header\">".concat(market.name, "</div><p>").concat(market.description, "</p>"));
         infowindow.open(map, marker);
       });
-      data.places.forEach(function (place) {
-        var lat = place.geometry.location.lat;
-        var lng = place.geometry.location.lng;
+      data.markets.forEach(function (market) {
+        var lat = market.geometry.location.lat;
+        var lng = market.geometry.location.lng;
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(lat, lng),
           map: map
@@ -104463,6 +104521,18 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "six wide column" }, [
+    _vm.status_msg
+      ? _c(
+          "div",
+          {
+            staticClass: "alert",
+            class: { "alert-success": _vm.status, "alert-danger": !_vm.status },
+            attrs: { role: "alert" }
+          },
+          [_vm._v(_vm._s(_vm.status_msg))]
+        )
+      : _vm._e(),
+    _vm._v(" "),
     _c("form", { staticClass: "ui segment large form" }, [
       _c("div", { staticClass: "ui segment" }, [
         _c("div", { staticClass: "field" }, [
@@ -104472,116 +104542,81 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.coordinates,
-                  expression: "coordinates"
+                  value: _vm.search,
+                  expression: "search"
                 }
               ],
-              attrs: { type: "text", placeholder: "Enter your address" },
-              domProps: { value: _vm.coordinates },
+              attrs: {
+                type: "text",
+                disabled: _vm.type == "Nearest",
+                placeholder: "Enter search term"
+              },
+              domProps: { value: _vm.search },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.coordinates = $event.target.value
+                  _vm.search = $event.target.value
                 }
               }
             }),
             _vm._v(" "),
-            _c("i", {
-              staticClass: "dot circle link icon",
-              on: { click: _vm.locatorButtonPressed }
-            })
+            _c("i", { staticClass: "dot circle link icon green" })
           ])
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "field" }, [
-          _c("div", { staticClass: "two fields" }, [
-            _c("div", { staticClass: "field" }, [
-              _c(
-                "select",
+          _c("label", { attrs: { for: "search" } }, [_vm._v("Search by:")]),
+          _vm._v(" "),
+          _c(
+            "select",
+            {
+              directives: [
                 {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.type,
-                      expression: "type"
-                    }
-                  ],
-                  on: {
-                    change: function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.type = $event.target.multiple
-                        ? $$selectedVal
-                        : $$selectedVal[0]
-                    }
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "restaurant" } }, [
-                    _vm._v("Restaurant")
-                  ])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "field" }, [
-              _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.radius,
-                      expression: "radius"
-                    }
-                  ],
-                  on: {
-                    change: function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.radius = $event.target.multiple
-                        ? $$selectedVal
-                        : $$selectedVal[0]
-                    }
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "5" } }, [_vm._v("5 KM")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "10" } }, [_vm._v("10 KM")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "15" } }, [_vm._v("15 KM")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "20" } }, [_vm._v("20 KM")])
-                ]
-              )
-            ])
-          ])
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.type,
+                  expression: "type"
+                }
+              ],
+              attrs: { name: "search" },
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.type = $event.target.multiple
+                    ? $$selectedVal
+                    : $$selectedVal[0]
+                }
+              }
+            },
+            [
+              _c("option", { attrs: { value: "Name" } }, [_vm._v("Name")]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "Category" } }, [
+                _vm._v("Category")
+              ]),
+              _vm._v(" "),
+              _c("option", { attrs: { value: "Nearest" } }, [
+                _vm._v("Nearest market")
+              ])
+            ]
+          )
         ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "field" }),
         _vm._v(" "),
         _c(
           "button",
-          {
-            staticClass: "ui button",
-            on: { click: _vm.findCloseBuyButtonPressed }
-          },
-          [_vm._v("Find CloseBuy")]
+          { staticClass: "ui button green", on: { click: _vm.findMarket } },
+          [_vm._v("Find Market")]
         )
       ])
     ]),
@@ -104596,15 +104631,15 @@ var render = function() {
         _c(
           "div",
           { staticClass: "ui divided items" },
-          _vm._l(_vm.places, function(place) {
-            return _c("div", { key: place.id, staticClass: "item" }, [
+          _vm._l(_vm.markets, function(market) {
+            return _c("div", { key: market.id, staticClass: "item" }, [
               _c("div", { staticClass: "content" }, [
                 _c("div", { staticClass: "header" }, [
-                  _vm._v(_vm._s(place.name))
+                  _vm._v(_vm._s(market.name))
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "meta" }, [
-                  _vm._v(_vm._s(place.vicinity))
+                  _vm._v(_vm._s(market.description))
                 ])
               ])
             ])
@@ -121139,7 +121174,7 @@ vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(element_ui__WEBPACK_IMPORTED_MODULE_11___default.a); // Set Vue authentication
 
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(vue_axios__WEBPACK_IMPORTED_MODULE_5___default.a, axios__WEBPACK_IMPORTED_MODULE_1___default.a);
-axios__WEBPACK_IMPORTED_MODULE_1___default.a.defaults.baseURL = "".concat("http://market.site", "/api");
+axios__WEBPACK_IMPORTED_MODULE_1___default.a.defaults.baseURL = "".concat("https://market.site", "/api");
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(_websanova_vue_auth__WEBPACK_IMPORTED_MODULE_4__["default"], _auth__WEBPACK_IMPORTED_MODULE_8__["default"]); // Load Index
 
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.component('index', _Index__WEBPACK_IMPORTED_MODULE_7__["default"]);

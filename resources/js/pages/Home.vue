@@ -9,7 +9,7 @@
   </div>
 </template>
 <script>
-  import search from '../components/SearchMarket.vue'
+  import searchMarket from '../components/SearchMarket.vue'
   export default {
     data() {
       return {
@@ -28,12 +28,12 @@
             });
             var infowindow = new google.maps.InfoWindow();
             google.maps.event.addListener(marker, "click", () => {
-                infowindow.setContent(`<div class="ui header">${place.name}</div><p>${place.vicinity}</p>`);
+                infowindow.setContent(`<div class="ui header">${market.name}</div><p>${market.description}</p>`);
                 infowindow.open(map, marker);
             });
-            data.places.forEach((place) => {
-                const lat = place.geometry.location.lat;
-                const lng = place.geometry.location.lng;
+            data.markets.forEach((market) => {
+                const lat = market.geometry.location.lat;
+                const lng = market.geometry.location.lng;
                 let marker = new google.maps.Marker({
                     position: new google.maps.LatLng(lat, lng),
                     map: map

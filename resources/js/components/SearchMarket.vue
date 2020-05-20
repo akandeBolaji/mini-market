@@ -1,18 +1,36 @@
 <template>
     <div class="six wide column">
+        <div
+        v-if="status_msg"
+        :class="{ 'alert-success': status, 'alert-danger': !status }"
+        class="alert"
+        role="alert"
+        >{{ status_msg }}</div>
         <form class="ui segment large form">
         <div class="ui segment">
             <div class="field">
             <div class="ui right icon input large">
-                <input type="text" placeholder="Enter your address" v-model="coordinates" />
-                <i class="dot circle link icon" @click="locatorButtonPressed"></i>
+                <input type="text" :disabled="type=='Nearest'" placeholder="Enter search term" v-model="search" />
+                <i class="dot circle link icon green"></i>
             </div>
             </div>
             <div class="field">
-            <div class="two fields">
+                <label for="search">Search by:</label>
+                <select v-model="type" name="search">
+                    <option value="Name">Name</option>
+                    <option value="Category">Category</option>
+                    <option value="Nearest">Nearest market</option>
+                </select>
+            </div>
+            <div class="field">
+
+            <!-- <div class="two fields">
                 <div class="field">
-                <select v-model="type">
-                    <option value="restaurant">Restaurant</option>
+                <select name="search">
+                    <option value="restaurant">Search by :</option>
+                    <option value="gsgt">Name</option>
+                    <option value="gsgt">Category</option>
+                    <option value="gsgt">Nearest market</option>
                 </select>
                 </div>
                 <div class="field">
@@ -23,17 +41,17 @@
                     <option value="20">20 KM</option>
                 </select>
                 </div>
+            </div> -->
             </div>
-            </div>
-            <button class="ui button" @click="findCloseBuyButtonPressed">Find CloseBuy</button>
+            <button class="ui button green" @click="findMarket">Find Market</button>
         </div>
         </form>
         <div class="ui segment"  style="max-height:500px;overflow:scroll">
             <div class="ui divided items">
-                <div class="item" v-for="place in places" :key="place.id">
+                <div class="item" v-for="market in markets" :key="market.id">
                     <div class="content">
-                        <div class="header">{{place.name}}</div>
-                        <div class="meta">{{place.vicinity}}</div>
+                        <div class="header">{{market.name}}</div>
+                        <div class="meta">{{market.description}}</div>
                     </div>
                 </div>
             </div>
@@ -47,19 +65,26 @@ export default {
         return {
         lat: 0,
         lng: 0,
-        type: "",
+        search: '',
+        type: "Name",
         radius: "",
-        places: []
+        markets: [],
+        status_msg: '',
         };
     },
     computed: {
         coordinates() {
-        return `${this.lat}, ${this.lng}`;
+        //return `${this.lat}, ${this.lng}`;
+        return null;
         }
     },
 
+    mounted() {
+        this.getUserLocation();
+    },
+
     methods: {
-        locatorButtonPressed() {
+        getUserLocation() {
             navigator.geolocation.getCurrentPosition(
             position => {
                 this.lat = position.coords.latitude;
@@ -70,24 +95,51 @@ export default {
             }
             );
         },
-        findCloseBuyButtonPressed() {
-            const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${
-                this.lat
-            },${this.lng}&type=${this.type}&radius=${this.radius *
-                1000}&key=${key}`;
-            axios.get(URL).then(response => {
-                this.places = response.data.results;
-                this.$emit('addToMap', {
-                    'lat' : this.lat,
-                    'lng' : this.lng,
-                    'places': this.places
+        findMarket(e) {
+            e.preventDefault();
+            if (!this.validateForm()) {
+                return false;
+            }
+            api
+                .post("/search", {
+                    'search': this.search,
+                    'type': this.type,
+                    'lat': this.lat,
+                    'long': this.lng
+                })
+                .then(res => {
+                    this.markets = res.data;
+                    this.$emit('addToMap', {
+                        'lat' : this.lat,
+                        'lng' : this.lng,
+                        'markets': this.markets
+                    });
+                }).catch(error => {
+                    this.showNotification("A server error");
+                    console.log(error.message);
                 });
-                this.addLocationsToGoogleMaps();
-            }).catch(error => {
-                console.log(error.message);
-            });
         },
-    }
+        validateForm() {
+            //no vaildation for images - it is needed
+            if (!this.type) {
+                this.status = false;
+                this.showNotification("Type cannot be empty");
+                return false;
+            }
+            if (this.type != 'Nearest' && !this.search) {
+                this.status = false;
+                this.showNotification("Search cannot be empty");
+                return false;
+            }
+            return true;
+            },
+        },
+        showNotification(message) {
+            this.status_msg = message;
+            setTimeout(() => {
+                this.status_msg = "";
+            }, 3000);
+        }
 
 }
 </script>
