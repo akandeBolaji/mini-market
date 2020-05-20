@@ -77,6 +77,11 @@ export default {
                 1000}&key=${key}`;
             axios.get(URL).then(response => {
                 this.places = response.data.results;
+                this.$emit('addToMap', {
+                    'lat' : this.lat,
+                    'lng' : this.lng,
+                    'places': this.places
+                });
                 this.addLocationsToGoogleMaps();
             }).catch(error => {
                 console.log(error.message);

@@ -5372,6 +5372,12 @@ __webpack_require__.r(__webpack_exports__);
       axios.get(URL).then(function (response) {
         _this2.places = response.data.results;
 
+        _this2.$emit('addToMap', {
+          'lat': _this2.lat,
+          'lng': _this2.lng,
+          'places': _this2.places
+        });
+
         _this2.addLocationsToGoogleMaps();
       })["catch"](function (error) {
         console.log(error.message);
@@ -5448,6 +5454,28 @@ __webpack_require__.r(__webpack_exports__);
   },
   components: {
     searchMarket: searchMarket
+  },
+  methods: {
+    addLocationsToGoogleMaps: function addLocationsToGoogleMaps(data) {
+      var map = new google.maps.Map(this.$refs['map'], {
+        zoom: 15,
+        center: new google.maps.LatLng(data.lat, data.lng),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      });
+      var infowindow = new google.maps.InfoWindow();
+      google.maps.event.addListener(marker, "click", function () {
+        infowindow.setContent("<div class=\"ui header\">".concat(place.name, "</div><p>").concat(place.vicinity, "</p>"));
+        infowindow.open(map, marker);
+      });
+      data.places.forEach(function (place) {
+        var lat = place.geometry.location.lat;
+        var lng = place.geometry.location.lng;
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(lat, lng),
+          map: map
+        });
+      });
+    }
   }
 });
 
@@ -104648,7 +104676,20 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "ui grid" }, [
-    _c("div", { staticClass: "six wide column" }, [_c("searchMarket")], 1),
+    _c(
+      "div",
+      { staticClass: "six wide column" },
+      [
+        _c("searchMarket", {
+          on: {
+            addToMap: function($event) {
+              return _vm.addLocationsToGoogleMaps($event)
+            }
+          }
+        })
+      ],
+      1
+    ),
     _vm._v(" "),
     _c("div", { ref: "map", staticClass: "ten wide column segment ui" })
   ])
@@ -121782,7 +121823,8 @@ vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_2__
 var debug = "development" !== 'production';
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
   state: {
-    markets: []
+    markets: [],
+    search: []
   },
   actions: {
     getAllMarkets: function getAllMarkets(_ref) {
@@ -121808,11 +121850,38 @@ var debug = "development" !== 'production';
           }
         }, _callee);
       }))();
+    },
+    searchResult: function searchResult(_ref2) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var commit;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                commit = _ref2.commit;
+                _context2.t0 = commit;
+                _context2.next = 4;
+                return api.get('/search');
+
+              case 4:
+                _context2.t1 = _context2.sent;
+                return _context2.abrupt("return", (0, _context2.t0)('setSearch', _context2.t1));
+
+              case 6:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
     }
   },
   mutations: {
     setMarkets: function setMarkets(state, response) {
       state.markets = response.data.data;
+    },
+    setSearch: function setSearch(state, response) {
+      state.search = response.data.data;
     }
   },
   strict: debug
