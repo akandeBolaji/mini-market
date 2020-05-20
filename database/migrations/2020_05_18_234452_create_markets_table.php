@@ -16,6 +16,8 @@ class CreateMarketsTable extends Migration
         Schema::create('markets', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('description');
+            $table->string('category');
             $table->foreignId('category_id')->constrained('food_categories');
             $table->string('address_address')->nullable();
             $table->double('address_latitude')->nullable();

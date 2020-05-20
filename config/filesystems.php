@@ -65,6 +65,12 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
+        'uploads' => [
+            'driver' => 'local',
+            'root' => 'uploads',
+            'url' => 'uploads',
+          ],
+
     ],
 
     /*
@@ -81,11 +87,5 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],
-
-    'uploads' => [
-        'driver' => 'local',
-        'root' => 'uploads',
-        'url' => 'uploads',
-      ],
 
 ];

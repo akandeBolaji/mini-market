@@ -7,13 +7,13 @@ use Storage;
 
 class StoreImageService
 {
-    public function run($image, $market, $user)
+    public function run($image, $market_id, $user_email)
     {
-        $imagePath = Storage::disk('uploads')->put($user->email . '/markets/' . $market->id, $image);
-        $image = Image::create([
+        $imagePath = Storage::disk('uploads')->put($user_email . '/markets/' . $market_id, $image);
+        $image_create = Image::create([
             'url' => '/uploads/' . $imagePath,
-            'market_id' => $post->id
+            'market_id' => $market_id
         ]);
-        return $image;
+        return $image_create;
     }
 }

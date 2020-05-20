@@ -28,7 +28,7 @@
           // UNLOGGED
           unlogged: [
             {
-              name: 'Login',
+              name: 'Admin Login',
               path: 'login'
             }
           ],

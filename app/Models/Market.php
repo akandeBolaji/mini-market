@@ -8,7 +8,8 @@ class Market extends Model
 {
     protected $fillable = [
         'name',
-        'catgeory_id',
+        'category_id',
+        'description',
         'address_address',
         'address_latitude',
         'address_longitude'

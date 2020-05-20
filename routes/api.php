@@ -14,8 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('auth')->group(function () {
+    Route::group(['middleware' => 'auth:api'], function(){
+        Route::get('user', function (Request $request) {
+            return $request->user();
+        });
+    });
 });
 
 Route::prefix('admin')->group(function () {
@@ -24,5 +28,7 @@ Route::prefix('admin')->group(function () {
     Route::group(['middleware' => 'auth:api'], function(){
         Route::get('admin', 'AdminController@dashboard');
         Route::post('logout', 'AdminController@logout');
+        Route::post('create', 'MarketController@createMarket')->name('create.market');;
+        Route::get('get_all', 'MarketController@getAllMarkets')->name('fetch.markets');
     });
 });

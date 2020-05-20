@@ -10,7 +10,7 @@ const config = {
   tokenDefaultName: 'mini-market',
   tokenStore: ['localStorage'],
   rolesVar: 'role',
-  loginData: {url: 'admin/login', method: 'POST', redirect: '', fetchUser: true},
+  loginData: {url: 'admin/login', method: 'POST', redirect: '/dashboard', fetchUser: true},
   logoutData: {url: 'admin/logout', method: 'POST', redirect: '/', makeRequest: true},
   refreshData: {url: 'admin/refresh', method: 'GET', enabled: true, interval: 30}
 }

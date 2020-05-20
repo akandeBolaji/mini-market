@@ -24,9 +24,12 @@ class MarketRequest extends FormRequest
     public function rules()
     {
         return [
-            'name.required' => 'Name is required!',
-            'description.required' => 'Description is required!',
-            'category.required' => 'Category is required',
+            'name' => 'required',
+            'description' => 'required',
+            'category' => 'required',
+            'address' => 'required',
+            'address_lat' => 'required',
+            'address_long' => 'required',
             "images"    => "required|array|min:3|max:3",
             'images.*' => 'required|mimetypes:image/jpeg,image/png,image/bmp|max:2000',
             'images.required' => 'Please upload one or more images',

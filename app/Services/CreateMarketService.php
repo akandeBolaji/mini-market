@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Services\StoreImageService;
 use App\Models\Market;
+use App\Models\FoodCategory;
 use Auth;
 use DB;
 
@@ -13,23 +14,31 @@ class CreateMarketService
     {
         DB::transaction(function () use ($request) {
             $user = Auth::user();
-            $title = $request->title;
-            $body = $request->body;
+            $category = FoodCategory::firstOrCreate(['name' => $request->category]);
+            $name = $request->name;
+            $description = $request->description;
+            $address = $request->address;
+            $address_lat = $request->address_lat;
+            $address_long = $request->address_long;
             $images = $request->images;
             $market = Market::create([
-                'title' => $title,
-                'body' => $body,
-                'user_id' => $user->id,
+                'name' => $name,
+                'description' => $description,
+                'category' => $category->name,
+                'category_id' => $category->id,
+                'address_address' => $address,
+                'address_latitude' => $address_lat,
+                'address_longitude' => $address_long
             ]);
-            $storeImage = $this->storeImages($images, $market, $user);
+            $storeImage = $this->storeImages($images, $market->id, $user->email);
             return $market;
         });
     }
 
-    protected function storeImages($image, $market, $user)
+    protected function storeImages($images, $market_id, $user_email)
     {
         foreach($images as $image) {
-            (new StoreImageService())->run($image, $market, $user);
+            (new StoreImageService())->run($image, $market_id, $user_email);
         }
     }
 }
