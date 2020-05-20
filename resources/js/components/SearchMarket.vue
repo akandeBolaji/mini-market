@@ -85,10 +85,12 @@ export default {
 
     methods: {
         getUserLocation() {
+            console.log('hi');
             navigator.geolocation.getCurrentPosition(
             position => {
                 this.lat = position.coords.latitude;
                 this.lng = position.coords.longitude;
+                console.log('hi',this.lng, this.lat);
             },
             error => {
                 console.log("Error getting location");
@@ -108,7 +110,8 @@ export default {
                     'long': this.lng
                 })
                 .then(res => {
-                    this.markets = res.data;
+                    this.markets = res.data.data;
+                    console.log(this.markets);
                     this.$emit('addToMap', {
                         'lat' : this.lat,
                         'lng' : this.lng,

@@ -5382,9 +5382,11 @@ __webpack_require__.r(__webpack_exports__);
     getUserLocation: function getUserLocation() {
       var _this = this;
 
+      console.log('hi');
       navigator.geolocation.getCurrentPosition(function (position) {
         _this.lat = position.coords.latitude;
         _this.lng = position.coords.longitude;
+        console.log('hi', _this.lng, _this.lat);
       }, function (error) {
         console.log("Error getting location");
       });
@@ -5404,7 +5406,8 @@ __webpack_require__.r(__webpack_exports__);
         'lat': this.lat,
         'long': this.lng
       }).then(function (res) {
-        _this2.markets = res.data;
+        _this2.markets = res.data.data;
+        console.log(_this2.markets);
 
         _this2.$emit('addToMap', {
           'lat': _this2.lat,
@@ -5517,21 +5520,23 @@ __webpack_require__.r(__webpack_exports__);
     addLocationsToGoogleMaps: function addLocationsToGoogleMaps(data) {
       var map = new google.maps.Map(this.$refs['map'], {
         zoom: 15,
-        center: new google.maps.LatLng(data.lat, data.lng),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      });
-      var infowindow = new google.maps.InfoWindow();
-      google.maps.event.addListener(marker, "click", function () {
-        infowindow.setContent("<div class=\"ui header\">".concat(market.name, "</div><p>").concat(market.description, "</p>"));
-        infowindow.open(map, marker);
+        center: new google.maps.LatLng(data.markets[0].address_latitude, data.markets[0].address_longitude),
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeControl: false
       });
       data.markets.forEach(function (market) {
-        var lat = market.geometry.location.lat;
-        var lng = market.geometry.location.lng;
+        var lat = market.address_latitude;
+        var lng = market.address_longitude;
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(lat, lng),
           map: map
         });
+        var infowindow = new google.maps.InfoWindow();
+        infowindow.setContent("<div class=\"ui header\">".concat(market.name, "</div><p>").concat(market.description, "</p>"));
+        infowindow.open(map, marker); // google.maps.event.addListener(marker, "click", () => {
+        // infowindow.setContent(`<div class="ui header">${market.name}</div><p>${market.description}</p>`);
+        // infowindow.open(map, marker);
+        // });
       });
     }
   }
