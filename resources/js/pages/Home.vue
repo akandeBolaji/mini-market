@@ -1,12 +1,23 @@
 <template>
-    <div class="container">
-        <div class="card card-default">
-            <div class="card-header">Home</div>
-            <div class="card-body">
-                <p>
-                    Search for marketss
-                </p>
-            </div>
-        </div>
+  <div class="ui grid">
+    <div class="six wide column">
+        <searchMarket/>
     </div>
+    <div class="ten wide column segment ui" ref="map">
+
+    </div>
+  </div>
 </template>
+<script>
+  import search from '../components/SearchMarket.vue'
+  export default {
+    data() {
+      return {
+        //
+      }
+    },
+    components: {
+      searchMarket,
+    }
+  }
+</script>
