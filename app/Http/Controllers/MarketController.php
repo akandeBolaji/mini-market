@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MarketRequest;
+use App\Http\Requests\SearchMarketRequest;
 use App\Services\CreateMarketService;
 use App\Services\GetMarketService;
 use Illuminate\Http\Request;
@@ -19,6 +20,11 @@ class MarketController extends Controller
     {
         $markets = (new GetMarketService())->run();
         return response()->json(['error' => false, 'data' => $markets]);
+    }
+
+    public function searchMarket(SearchMarketRequest $request)
+    {
+
     }
 
     public function show(Market $market)
