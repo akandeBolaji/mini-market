@@ -27,7 +27,7 @@ class Market extends Model
 		return $this->belongsTo(Category::class);
     }
 
-    public static function getNearBy($lat, $lng, $distance = 5, $distanceIn = 'km')
+    public static function getNearBy($lat, $lng, $distance = 500, $distanceIn = 'km')
     {
     if ($distanceIn == 'km') {
     $results = self::select(['*', DB::raw('( 0.621371 * 3959 * acos( cos( radians('.$lat.') ) * cos( radians( address_latitude ) ) * cos( radians( address_longitude ) - radians('.$lng.') ) + sin( radians('.$lat.') ) * sin( radians(address_latitude) ) ) ) AS distance')])->havingRaw('distance < '.$distance)->orderBy("distance")->get();

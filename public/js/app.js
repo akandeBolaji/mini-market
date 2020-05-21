@@ -104651,7 +104651,8 @@ var render = function() {
                 market.distance
                   ? _c("div", [
                       _vm._v(
-                        _vm._s(_vm._f("truncate")(market.distance, 4)) + "km"
+                        _vm._s(market.distance.toString().substring(0, 6)) +
+                          "km"
                       )
                     ])
                   : _vm._e()

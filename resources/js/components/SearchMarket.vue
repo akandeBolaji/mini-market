@@ -52,7 +52,7 @@
                     <div class="content">
                         <div class="header">{{market.name}}</div>
                         <div class="meta">{{market.description}}</div>
-                        <div v-if="market.distance">{{ market.distance | truncate(4) }}km</div>
+                        <div v-if="market.distance">{{ market.distance.toString().substring(0, 6) }}km</div>
                     </div>
                 </div>
             </div>
