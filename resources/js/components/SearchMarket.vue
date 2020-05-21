@@ -52,6 +52,7 @@
                     <div class="content">
                         <div class="header">{{market.name}}</div>
                         <div class="meta">{{market.description}}</div>
+                        <div v-if="market.distance">{{ market.distance | truncate(4) }}km</div>
                     </div>
                 </div>
             </div>
@@ -107,7 +108,7 @@ export default {
                     'search': this.search,
                     'type': this.type,
                     'lat': this.lat,
-                    'long': this.lng
+                    'lng': this.lng
                 })
                 .then(res => {
                     this.markets = res.data.data;
@@ -135,14 +136,15 @@ export default {
                 return false;
             }
             return true;
-            },
         },
+
         showNotification(message) {
             this.status_msg = message;
             setTimeout(() => {
                 this.status_msg = "";
             }, 3000);
-        }
+        },
+    }
 
 }
 </script>

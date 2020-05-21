@@ -10,22 +10,28 @@ class SearchMarketService
     {
         if ($request->type == 'Name')
         {
-            $markets = $this->filterMarket('name', $request->search);
+            $markets = $this->filterMarket(['name'], $request->search);
         }
         else if ($request->type == 'Category')
         {
-            $markets = $this->filterMarket('category', $request->search);
+            $markets = $this->filterMarket(['category'], $request->search);
         }
         else
         {
-
+            $markets = $this->getDistance($request->lat, $request->lng);
         }
         return $markets;
     }
 
     protected function filterMarket($field, $parameter)
     {
-        return Market::with('images')->where($field, $parameter)->orderBy('created_at', 'desc')->get();
+        return Market::with('images')->whereLike($field, $parameter)->orderBy('created_at', 'desc')->get();
+    }
+
+    protected function getDistance($latitude, $longitude)
+    {
+        $markets = Market::getNearBy($latitude, $longitude);
+        return $markets;
     }
 
 }

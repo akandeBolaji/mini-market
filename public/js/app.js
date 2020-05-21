@@ -5357,6 +5357,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -5404,7 +5405,7 @@ __webpack_require__.r(__webpack_exports__);
         'search': this.search,
         'type': this.type,
         'lat': this.lat,
-        'long': this.lng
+        'lng': this.lng
       }).then(function (res) {
         _this2.markets = res.data.data;
         console.log(_this2.markets);
@@ -5435,15 +5436,15 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return true;
-    }
-  },
-  showNotification: function showNotification(message) {
-    var _this3 = this;
+    },
+    showNotification: function showNotification(message) {
+      var _this3 = this;
 
-    this.status_msg = message;
-    setTimeout(function () {
-      _this3.status_msg = "";
-    }, 3000);
+      this.status_msg = message;
+      setTimeout(function () {
+        _this3.status_msg = "";
+      }, 3000);
+    }
   }
 });
 
@@ -104645,7 +104646,15 @@ var render = function() {
                 _vm._v(" "),
                 _c("div", { staticClass: "meta" }, [
                   _vm._v(_vm._s(market.description))
-                ])
+                ]),
+                _vm._v(" "),
+                market.distance
+                  ? _c("div", [
+                      _vm._v(
+                        _vm._s(_vm._f("truncate")(market.distance, 4)) + "km"
+                      )
+                    ])
+                  : _vm._e()
               ])
             ])
           }),
@@ -121180,7 +121189,11 @@ vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(element_ui__WEBPACK_IMPORTED_MODU
 
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(vue_axios__WEBPACK_IMPORTED_MODULE_5___default.a, axios__WEBPACK_IMPORTED_MODULE_1___default.a);
 axios__WEBPACK_IMPORTED_MODULE_1___default.a.defaults.baseURL = "".concat("https://market.site", "/api");
-vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(_websanova_vue_auth__WEBPACK_IMPORTED_MODULE_4__["default"], _auth__WEBPACK_IMPORTED_MODULE_8__["default"]); // Load Index
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(_websanova_vue_auth__WEBPACK_IMPORTED_MODULE_4__["default"], _auth__WEBPACK_IMPORTED_MODULE_8__["default"]); //truncate text
+
+vue__WEBPACK_IMPORTED_MODULE_3___default.a.filter('truncate', function (text, stop, clamp) {
+  return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '');
+}); // Load Index
 
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.component('index', _Index__WEBPACK_IMPORTED_MODULE_7__["default"]);
 var app = new vue__WEBPACK_IMPORTED_MODULE_3___default.a({

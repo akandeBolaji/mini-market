@@ -22,6 +22,10 @@ Vue.use(ElementUI);
 Vue.use(VueAxios, axios)
 axios.defaults.baseURL = `${process.env.MIX_APP_URL}/api`
 Vue.use(VueAuth, auth)
+//truncate text
+Vue.filter('truncate', function (text, stop, clamp) {
+    return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
+})
 // Load Index
 Vue.component('index', Index)
 const app = new Vue({
