@@ -154,6 +154,7 @@ export default {
       this.description = market.description;
       this.category = market.category;
       this.address = market.address_address;
+      this.formatted_address = market.address_address;
       this.address_lat = market.address_latitude;
       this.address_long = market.address_longitude;
       this.updateReceived = true;
@@ -178,7 +179,16 @@ export default {
         return false;
       }
       const that = this;
-      this.isCreatingMarket = true;
+      if (this.updateReceived)
+      {
+        this.isUpdatingMarket = true;
+        this.isCreatingMarket = false;
+      }
+      else
+      {
+        this.isCreatingMarket = true;
+        this.isUpdatingMarket = true;
+      }
       let formData = new FormData();
       formData.append("id", this.id);
       formData.append("name", this.name);
@@ -200,6 +210,8 @@ export default {
           this.status = true;
           this.showNotification("Market Successfully Created");
           this.isCreatingMarket = false;
+          this.isUpdatingMarket = false;
+          this.updateReceived = false;
           this.imageList = [];
           /*
            this.getAllPosts() can be used here as well

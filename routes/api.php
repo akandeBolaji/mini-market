@@ -30,7 +30,8 @@ Route::prefix('admin')->group(function () {
     Route::group(['middleware' => 'auth:api'], function(){
         Route::get('admin', 'AdminController@dashboard');
         Route::post('logout', 'AdminController@logout');
-        Route::post('create', 'MarketController@createMarket')->name('create.market');;
+        Route::post('create', 'MarketController@createMarket')->name('create.market');
+        Route::post('update', 'MarketController@updateMarket')->name('update.market');
         Route::get('get_all', 'MarketController@getAllMarkets')->name('fetch.markets');
     });
 });

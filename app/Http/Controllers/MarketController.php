@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MarketRequest;
 use App\Http\Requests\SearchMarketRequest;
+use App\Http\Requests\UpdateMarketRequest;
 use App\Services\CreateMarketService;
 use App\Services\GetMarketService;
 use App\Services\SearchMarketService;
+use App\Services\UpdateMarketService;
 use Illuminate\Http\Request;
 
 class MarketController extends Controller
@@ -14,6 +16,12 @@ class MarketController extends Controller
     public function createMarket(MarketRequest $request)
     {
         $create = (new CreateMarketService())->run($request);
+        return response()->json(200);
+    }
+
+    public function updateMarket(UpdateMarketRequest $request)
+    {
+        $create = (new UpdateMarketService())->run($request);
         return response()->json(200);
     }
 

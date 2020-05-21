@@ -5148,6 +5148,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this2.description = market.description;
       _this2.category = market.category;
       _this2.address = market.address_address;
+      _this2.formatted_address = market.address_address;
       _this2.address_lat = market.address_latitude;
       _this2.address_long = market.address_longitude;
       _this2.updateReceived = true;
@@ -5174,7 +5175,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       var that = this;
-      this.isCreatingMarket = true;
+
+      if (this.updateReceived) {
+        this.isUpdatingMarket = true;
+        this.isCreatingMarket = false;
+      } else {
+        this.isCreatingMarket = true;
+        this.isUpdatingMarket = true;
+      }
+
       var formData = new FormData();
       formData.append("id", this.id);
       formData.append("name", this.name);
@@ -5198,6 +5207,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         _this3.showNotification("Market Successfully Created");
 
         _this3.isCreatingMarket = false;
+        _this3.isUpdatingMarket = false;
+        _this3.updateReceived = false;
         _this3.imageList = [];
         /*
          this.getAllPosts() can be used here as well
