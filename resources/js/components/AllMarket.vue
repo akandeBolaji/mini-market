@@ -24,7 +24,7 @@
       </span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="updateMarket(currentMarket)">Update</el-button>
-        <el-button type="danger" @click="marketDialogVisible = false">Delete</el-button>
+        <el-button type="danger" @click="deleteMarket(currentMarket)">Delete</el-button>
       </span>
     </el-dialog>
   </div>
@@ -62,7 +62,11 @@ export default {
     updateMarket(market) {
       this.marketDialogVisible = false;
       bus.$emit('updateMarket', market);
-    }
+    },
+    deleteMarket(market) {
+      this.marketDialogVisible = false;
+      bus.$emit('deleteMarket', market);
+    },
   },
 }
 </script>

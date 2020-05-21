@@ -4966,6 +4966,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     updateMarket: function updateMarket(market) {
       this.marketDialogVisible = false;
       _app__WEBPACK_IMPORTED_MODULE_1__["bus"].$emit('updateMarket', market);
+    },
+    deleteMarket: function deleteMarket(market) {
+      this.marketDialogVisible = false;
+      _app__WEBPACK_IMPORTED_MODULE_1__["bus"].$emit('deleteMarket', market);
     }
   }
 });
@@ -5152,6 +5156,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this2.address_lat = market.address_latitude;
       _this2.address_long = market.address_longitude;
       _this2.updateReceived = true;
+    });
+    _app__WEBPACK_IMPORTED_MODULE_2__["bus"].$on('deleteMarket', function (market) {
+      api.post("/admin/delete", market.id).then(function (res) {
+        that.getAllMarkets();
+      });
     });
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(["getAllMarkets"])), {}, {
@@ -104239,7 +104248,7 @@ var render = function() {
                       attrs: { type: "danger" },
                       on: {
                         click: function($event) {
-                          _vm.marketDialogVisible = false
+                          return _vm.deleteMarket(_vm.currentMarket)
                         }
                       }
                     },
