@@ -18,7 +18,7 @@ class SearchMarketService
         }
         else
         {
-            $markets = $this->getDistance($request->lat, $request->lng);
+            $markets = $this->getDistance($request->lat, $request->lng, $request->radius);
         }
         return $markets;
     }
@@ -28,7 +28,7 @@ class SearchMarketService
         return Market::with('images')->whereLike($field, $parameter)->orderBy('created_at', 'desc')->get();
     }
 
-    protected function getDistance($latitude, $longitude)
+    protected function getDistance($latitude, $longitude, $radius)
     {
         $markets = Market::getNearBy($latitude, $longitude);
         return $markets;

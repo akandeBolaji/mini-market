@@ -5352,12 +5352,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -5365,7 +5359,7 @@ __webpack_require__.r(__webpack_exports__);
       lng: 0,
       search: '',
       type: "Name",
-      radius: "",
+      radius: "5",
       markets: [],
       status_msg: ''
     };
@@ -5387,6 +5381,12 @@ __webpack_require__.r(__webpack_exports__);
       navigator.geolocation.getCurrentPosition(function (position) {
         _this.lat = position.coords.latitude;
         _this.lng = position.coords.longitude;
+
+        _this.$emit('addDefault', {
+          'lat': _this.lat,
+          'lng': _this.lng
+        });
+
         console.log('hi', _this.lng, _this.lat);
       }, function (error) {
         console.log("Error getting location");
@@ -5404,6 +5404,7 @@ __webpack_require__.r(__webpack_exports__);
       api.post("/search", {
         'search': this.search,
         'type': this.type,
+        'radius': this.radius,
         'lat': this.lat,
         'lng': this.lng
       }).then(function (res) {
@@ -5539,6 +5540,23 @@ __webpack_require__.r(__webpack_exports__);
         // infowindow.open(map, marker);
         // });
       });
+    },
+    addDefaultLocation: function addDefaultLocation(data) {
+      var map = new google.maps.Map(this.$refs['map'], {
+        zoom: 15,
+        center: new google.maps.LatLng(data.lat, data.lng),
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeControl: false
+      });
+      var lat = data.lat;
+      var lng = data.lng;
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(lat, lng),
+        map: map
+      });
+      var infowindow = new google.maps.InfoWindow();
+      infowindow.setContent("<div class=\"ui header\">Your location</div>");
+      infowindow.open(map, marker);
     }
   }
 });
@@ -104526,7 +104544,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "six wide column" }, [
+  return _c("div", { staticClass: "six wide column container" }, [
     _vm.status_msg
       ? _c(
           "div",
@@ -104541,37 +104559,6 @@ var render = function() {
     _vm._v(" "),
     _c("form", { staticClass: "ui segment large form" }, [
       _c("div", { staticClass: "ui segment" }, [
-        _c("div", { staticClass: "field" }, [
-          _c("div", { staticClass: "ui right icon input large" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.search,
-                  expression: "search"
-                }
-              ],
-              attrs: {
-                type: "text",
-                disabled: _vm.type == "Nearest",
-                placeholder: "Enter search term"
-              },
-              domProps: { value: _vm.search },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.search = $event.target.value
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("i", { staticClass: "dot circle link icon green" })
-          ])
-        ]),
-        _vm._v(" "),
         _c("div", { staticClass: "field" }, [
           _c("label", { attrs: { for: "search" } }, [_vm._v("Search by:")]),
           _vm._v(" "),
@@ -104617,7 +104604,83 @@ var render = function() {
           )
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "field" }),
+        _vm.type != "Nearest"
+          ? _c("div", { staticClass: "field" }, [
+              _c("div", { staticClass: "ui right icon input large" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.search,
+                      expression: "search"
+                    }
+                  ],
+                  attrs: { type: "text", placeholder: "Enter search term" },
+                  domProps: { value: _vm.search },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.search = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("i", { staticClass: "dot circle link icon green" })
+              ])
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _c("div", { staticClass: "field" }, [
+          _vm.type == "Nearest"
+            ? _c("div", { staticClass: "field" }, [
+                _c("label", { attrs: { for: "location" } }, [
+                  _vm._v("Distance from your location :")
+                ]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.radius,
+                        expression: "radius"
+                      }
+                    ],
+                    attrs: { name: "location" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.radius = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  [
+                    _c("option", { attrs: { value: "5" } }, [_vm._v("5 KM")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "10" } }, [_vm._v("10 KM")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "15" } }, [_vm._v("15 KM")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "20" } }, [_vm._v("20 KM")])
+                  ]
+                )
+              ])
+            : _vm._e()
+        ]),
         _vm._v(" "),
         _c(
           "button",
@@ -104631,36 +104694,38 @@ var render = function() {
       "div",
       {
         staticClass: "ui segment",
-        staticStyle: { "max-height": "500px", overflow: "scroll" }
+        staticStyle: { "min-height": "500px", overflow: "scroll" }
       },
       [
-        _c(
-          "div",
-          { staticClass: "ui divided items" },
-          _vm._l(_vm.markets, function(market) {
-            return _c("div", { key: market.id, staticClass: "item" }, [
-              _c("div", { staticClass: "content" }, [
-                _c("div", { staticClass: "header" }, [
-                  _vm._v(_vm._s(market.name))
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "meta" }, [
-                  _vm._v(_vm._s(market.description))
-                ]),
-                _vm._v(" "),
-                market.distance
-                  ? _c("div", [
-                      _vm._v(
-                        _vm._s(market.distance.toString().substring(0, 6)) +
-                          "km"
-                      )
-                    ])
-                  : _vm._e()
-              ])
-            ])
-          }),
-          0
-        )
+        _vm.markets.length > 0
+          ? _c(
+              "div",
+              { staticClass: "ui divided items" },
+              _vm._l(_vm.markets, function(market) {
+                return _c("div", { key: market.id, staticClass: "item" }, [
+                  _c("div", { staticClass: "content" }, [
+                    _c("div", { staticClass: "header" }, [
+                      _vm._v(_vm._s(market.name))
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "meta" }, [
+                      _vm._v(_vm._s(market.description))
+                    ]),
+                    _vm._v(" "),
+                    market.distance
+                      ? _c("div", [
+                          _vm._v(
+                            _vm._s(market.distance.toString().substring(0, 6)) +
+                              "km"
+                          )
+                        ])
+                      : _vm._e()
+                  ])
+                ])
+              }),
+              0
+            )
+          : _c("div", [_vm._v("\n            No Results Founds\n        ")])
       ]
     )
   ])
@@ -104734,6 +104799,9 @@ var render = function() {
           on: {
             addToMap: function($event) {
               return _vm.addLocationsToGoogleMaps($event)
+            },
+            addDefault: function($event) {
+              return _vm.addDefaultLocation($event)
             }
           }
         })

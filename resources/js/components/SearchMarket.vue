@@ -1,5 +1,5 @@
 <template>
-    <div class="six wide column">
+    <div class="six wide column container">
         <div
         v-if="status_msg"
         :class="{ 'alert-success': status, 'alert-danger': !status }"
@@ -9,12 +9,6 @@
         <form class="ui segment large form">
         <div class="ui segment">
             <div class="field">
-            <div class="ui right icon input large">
-                <input type="text" :disabled="type=='Nearest'" placeholder="Enter search term" v-model="search" />
-                <i class="dot circle link icon green"></i>
-            </div>
-            </div>
-            <div class="field">
                 <label for="search">Search by:</label>
                 <select v-model="type" name="search">
                     <option value="Name">Name</option>
@@ -22,32 +16,29 @@
                     <option value="Nearest">Nearest market</option>
                 </select>
             </div>
+            <div class="field" v-if="type != 'Nearest'">
+            <div class="ui right icon input large">
+                <input type="text" placeholder="Enter search term" v-model="search" />
+                <i class="dot circle link icon green"></i>
+            </div>
+            </div>
             <div class="field">
 
-            <!-- <div class="two fields">
-                <div class="field">
-                <select name="search">
-                    <option value="restaurant">Search by :</option>
-                    <option value="gsgt">Name</option>
-                    <option value="gsgt">Category</option>
-                    <option value="gsgt">Nearest market</option>
-                </select>
-                </div>
-                <div class="field">
-                <select v-model="radius">
+            <div class="field" v-if="type == 'Nearest'">
+                 <label for="location">Distance from your location :</label>
+                <select v-model="radius" name="location">
                     <option value="5">5 KM</option>
                     <option value="10">10 KM</option>
                     <option value="15">15 KM</option>
                     <option value="20">20 KM</option>
                 </select>
-                </div>
-            </div> -->
+            </div>
             </div>
             <button class="ui button green" @click="findMarket">Find Market</button>
         </div>
         </form>
-        <div class="ui segment"  style="max-height:500px;overflow:scroll">
-            <div class="ui divided items">
+        <div class="ui segment"  style="min-height:500px; overflow:scroll">
+            <div class="ui divided items" v-if="markets.length > 0">
                 <div class="item" v-for="market in markets" :key="market.id">
                     <div class="content">
                         <div class="header">{{market.name}}</div>
@@ -55,6 +46,9 @@
                         <div v-if="market.distance">{{ market.distance.toString().substring(0, 6) }}km</div>
                     </div>
                 </div>
+            </div>
+            <div v-else>
+                No Results Founds
             </div>
         </div>
     </div>
@@ -68,7 +62,7 @@ export default {
         lng: 0,
         search: '',
         type: "Name",
-        radius: "",
+        radius: "5",
         markets: [],
         status_msg: '',
         };
@@ -91,6 +85,10 @@ export default {
             position => {
                 this.lat = position.coords.latitude;
                 this.lng = position.coords.longitude;
+                this.$emit('addDefault', {
+                    'lat' : this.lat,
+                    'lng' : this.lng
+                });
                 console.log('hi',this.lng, this.lat);
             },
             error => {
@@ -107,6 +105,7 @@ export default {
                 .post("/search", {
                     'search': this.search,
                     'type': this.type,
+                    'radius': this.radius,
                     'lat': this.lat,
                     'lng': this.lng
                 })
@@ -116,7 +115,7 @@ export default {
                     this.$emit('addToMap', {
                         'lat' : this.lat,
                         'lng' : this.lng,
-                        'markets': this.markets
+                        'markets': this.markets,
                     });
                 }).catch(error => {
                     this.showNotification("A server error");
