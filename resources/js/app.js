@@ -26,6 +26,8 @@ Vue.use(VueAuth, auth)
 Vue.filter('truncate', function (text, stop, clamp) {
     return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
 })
+//create event bus
+export const bus = new Vue();
 // Load Index
 Vue.component('index', Index)
 const app = new Vue({

@@ -48,11 +48,13 @@
           />
         </div>
         <div class>
-         <label for="exampleFormControlInput1">Sample Images</label>
+         <label v-if="updateReceived" for="exampleFormControlInput1">Update Images</label>
+         <label v-else for="exampleFormControlInput1">Sample Images</label>
           <el-upload
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
+            :limit="3"
             :on-change="updateImageList"
             :auto-upload="false"
           >
@@ -69,7 +71,7 @@
         type="button"
         @click="createMarket"
         class="btn btn-success"
-      >{{ isCreatingPost ? "Creating..." : "Create Market" }}</button>
+      >{{ isCreatingMarket ? "Creating..." : isUpdatingMarket ? "Updating..." : updateReceived ? "Update Market" : "Create Market" }}</button>
     </div>
   </div>
 </template>
@@ -103,6 +105,7 @@
 <script>
 import { setTimeout } from "timers";
 import { mapState, mapActions } from "vuex";
+import { bus } from '../app'
 export default {
   name: "create-market",
   props: ["markets"],
@@ -113,7 +116,10 @@ export default {
       imageList: [],
       status_msg: "",
       status: "",
-      isCreatingPost: false,
+      isCreatingMarket: false,
+      isUpdatingMarket: false,
+      updateReceived: false,
+      id: '',
       name: "",
       description: "",
       category: "",
@@ -141,6 +147,18 @@ export default {
         this.address = place.formatted_address;
     })
   },
+  created (){
+    bus.$on('updateMarket', (market) => {
+      this.id = market.id;
+      this.name = market.name;
+      this.description = market.description;
+      this.category = market.category;
+      this.address = market.address_address;
+      this.address_lat = market.address_latitude;
+      this.address_long = market.address_longitude;
+      this.updateReceived = true;
+    })
+  },
   methods: {
     ...mapActions(["getAllMarkets"]),
     checkAddress(address) {
@@ -160,8 +178,9 @@ export default {
         return false;
       }
       const that = this;
-      this.isCreatingPost = true;
+      this.isCreatingMarket = true;
       let formData = new FormData();
+      formData.append("id", this.id);
       formData.append("name", this.name);
       formData.append("description", this.description);
       formData.append("category", this.category);
@@ -171,15 +190,16 @@ export default {
       $.each(this.imageList, function(key, image) {
         formData.append(`images[${key}]`, image);
       });
+      let endpoint = this.updateReceived ? 'update' : 'create';
       api
-        .post("/admin/create", formData, {
+        .post(`/admin/${endpoint}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         })
         .then(res => {
           this.name = this.description = this.address = this.category = "";
           this.status = true;
           this.showNotification("Market Successfully Created");
-          this.isCreatingPost = false;
+          this.isCreatingMarket = false;
           this.imageList = [];
           /*
            this.getAllPosts() can be used here as well
@@ -218,7 +238,7 @@ export default {
         this.showNotification("Market category cannot be empty");
         return false;
       }
-      if (this.imageList.length != 3) {
+      if (this.imageList.length != 3 && (!this.updateReceived && this.imageList.length > 3) ) {
         this.status = false;
         this.showNotification("Sample Images must be three");
         return false;

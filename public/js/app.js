@@ -4897,6 +4897,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app */ "./resources/js/app.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -4934,6 +4935,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'all-markets',
@@ -4959,6 +4962,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var market = this.markets[marketIndex];
       this.currentMarket = market;
       this.marketDialogVisible = true;
+    },
+    updateMarket: function updateMarket(market) {
+      this.marketDialogVisible = false;
+      _app__WEBPACK_IMPORTED_MODULE_1__["bus"].$emit('updateMarket', market);
     }
   }
 });
@@ -4977,6 +4984,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! timers */ "./node_modules/timers-browserify/main.js");
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../app */ "./resources/js/app.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -5085,6 +5093,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5097,7 +5108,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       imageList: [],
       status_msg: "",
       status: "",
-      isCreatingPost: false,
+      isCreatingMarket: false,
+      isUpdatingMarket: false,
+      updateReceived: false,
+      id: '',
       name: "",
       description: "",
       category: "",
@@ -5125,6 +5139,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this.address = place.formatted_address;
     });
   },
+  created: function created() {
+    var _this2 = this;
+
+    _app__WEBPACK_IMPORTED_MODULE_2__["bus"].$on('updateMarket', function (market) {
+      _this2.id = market.id;
+      _this2.name = market.name;
+      _this2.description = market.description;
+      _this2.category = market.category;
+      _this2.address = market.address_address;
+      _this2.address_lat = market.address_latitude;
+      _this2.address_long = market.address_longitude;
+      _this2.updateReceived = true;
+    });
+  },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(["getAllMarkets"])), {}, {
     checkAddress: function checkAddress(address) {//console.log('auto', this.autocomplete);
     },
@@ -5137,7 +5165,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.dialogVisible = true;
     },
     createMarket: function createMarket(e) {
-      var _this2 = this;
+      var _this3 = this;
 
       e.preventDefault();
 
@@ -5146,8 +5174,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       var that = this;
-      this.isCreatingPost = true;
+      this.isCreatingMarket = true;
       var formData = new FormData();
+      formData.append("id", this.id);
       formData.append("name", this.name);
       formData.append("description", this.description);
       formData.append("category", this.category);
@@ -5157,18 +5186,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       $.each(this.imageList, function (key, image) {
         formData.append("images[".concat(key, "]"), image);
       });
-      api.post("/admin/create", formData, {
+      var endpoint = this.updateReceived ? 'update' : 'create';
+      api.post("/admin/".concat(endpoint), formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       }).then(function (res) {
-        _this2.name = _this2.description = _this2.address = _this2.category = "";
-        _this2.status = true;
+        _this3.name = _this3.description = _this3.address = _this3.category = "";
+        _this3.status = true;
 
-        _this2.showNotification("Market Successfully Created");
+        _this3.showNotification("Market Successfully Created");
 
-        _this2.isCreatingPost = false;
-        _this2.imageList = [];
+        _this3.isCreatingMarket = false;
+        _this3.imageList = [];
         /*
          this.getAllPosts() can be used here as well
          note: "that" has been assigned the value of "this" at the top
@@ -5212,7 +5242,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return false;
       }
 
-      if (this.imageList.length != 3) {
+      if (this.imageList.length != 3 && !this.updateReceived && this.imageList.length > 3) {
         this.status = false;
         this.showNotification("Sample Images must be three");
         return false;
@@ -5221,11 +5251,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return true;
     },
     showNotification: function showNotification(message) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.status_msg = message;
       Object(timers__WEBPACK_IMPORTED_MODULE_0__["setTimeout"])(function () {
-        _this3.status_msg = "";
+        _this4.status_msg = "";
       }, 3000);
     }
   })
@@ -104185,11 +104215,24 @@ var render = function() {
                       attrs: { type: "primary" },
                       on: {
                         click: function($event) {
+                          return _vm.updateMarket(_vm.currentMarket)
+                        }
+                      }
+                    },
+                    [_vm._v("Update")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "el-button",
+                    {
+                      attrs: { type: "danger" },
+                      on: {
+                        click: function($event) {
                           _vm.marketDialogVisible = false
                         }
                       }
                     },
-                    [_vm._v("Okay")]
+                    [_vm._v("Delete")]
                   )
                 ],
                 1
@@ -104375,9 +104418,13 @@ var render = function() {
           "div",
           {},
           [
-            _c("label", { attrs: { for: "exampleFormControlInput1" } }, [
-              _vm._v("Sample Images")
-            ]),
+            _vm.updateReceived
+              ? _c("label", { attrs: { for: "exampleFormControlInput1" } }, [
+                  _vm._v("Update Images")
+                ])
+              : _c("label", { attrs: { for: "exampleFormControlInput1" } }, [
+                  _vm._v("Sample Images")
+                ]),
             _vm._v(" "),
             _c(
               "el-upload",
@@ -104386,6 +104433,7 @@ var render = function() {
                   action: "https://jsonplaceholder.typicode.com/posts/",
                   "list-type": "picture-card",
                   "on-preview": _vm.handlePictureCardPreview,
+                  limit: 3,
                   "on-change": _vm.updateImageList,
                   "auto-upload": false
                 }
@@ -104423,7 +104471,19 @@ var render = function() {
           attrs: { type: "button" },
           on: { click: _vm.createMarket }
         },
-        [_vm._v(_vm._s(_vm.isCreatingPost ? "Creating..." : "Create Market"))]
+        [
+          _vm._v(
+            _vm._s(
+              _vm.isCreatingMarket
+                ? "Creating..."
+                : _vm.isUpdatingMarket
+                ? "Updating..."
+                : _vm.updateReceived
+                ? "Update Market"
+                : "Create Market"
+            )
+          )
+        ]
       )
     ])
   ])
@@ -121211,11 +121271,12 @@ __webpack_require__.r(__webpack_exports__);
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! no exports provided */
+/*! exports provided: bus */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bus", function() { return bus; });
 /* harmony import */ var es6_promise_auto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! es6-promise/auto */ "./node_modules/es6-promise/auto.js");
 /* harmony import */ var es6_promise_auto__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(es6_promise_auto__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
@@ -121262,7 +121323,9 @@ vue__WEBPACK_IMPORTED_MODULE_3___default.a.use(_websanova_vue_auth__WEBPACK_IMPO
 
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.filter('truncate', function (text, stop, clamp) {
   return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '');
-}); // Load Index
+}); //create event bus
+
+var bus = new vue__WEBPACK_IMPORTED_MODULE_3___default.a(); // Load Index
 
 vue__WEBPACK_IMPORTED_MODULE_3___default.a.component('index', _Index__WEBPACK_IMPORTED_MODULE_7__["default"]);
 var app = new vue__WEBPACK_IMPORTED_MODULE_3___default.a({
@@ -122029,8 +122092,8 @@ var debug = "development" !== 'production';
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\mini-market\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\mini-market\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! c:\xampp\htdocs\mini-market\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! c:\xampp\htdocs\mini-market\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

@@ -23,7 +23,8 @@
         <p>{{ currentMarket.description }}</p>
       </span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="marketDialogVisible = false">Okay</el-button>
+        <el-button type="primary" @click="updateMarket(currentMarket)">Update</el-button>
+        <el-button type="danger" @click="marketDialogVisible = false">Delete</el-button>
       </span>
     </el-dialog>
   </div>
@@ -31,6 +32,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { bus } from '../app'
 export default {
   name: 'all-markets',
   data() {
@@ -56,6 +58,10 @@ export default {
       const market = this.markets[marketIndex];
       this.currentMarket = market;
       this.marketDialogVisible = true;
+    },
+    updateMarket(market) {
+      this.marketDialogVisible = false;
+      bus.$emit('updateMarket', market);
     }
   },
 }
