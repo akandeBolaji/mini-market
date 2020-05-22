@@ -4936,6 +4936,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4943,6 +4944,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       marketDialogVisible: false,
+      deleting: '',
       currentMarket: ''
     };
   },
@@ -4950,7 +4952,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   beforeMount: function beforeMount() {
     this.$store.dispatch('getAllMarkets');
   },
-  methods: {
+  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(["getAllMarkets"])), {}, {
     truncateText: function truncateText(text) {
       if (text.length > 24) {
         return "".concat(text.substr(0, 24), "...");
@@ -4968,10 +4970,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _app__WEBPACK_IMPORTED_MODULE_1__["bus"].$emit('updateMarket', market);
     },
     deleteMarket: function deleteMarket(market) {
+      var _this = this;
+
       this.marketDialogVisible = false;
-      _app__WEBPACK_IMPORTED_MODULE_1__["bus"].$emit('deleteMarket', market);
+      this.deleting = market.id;
+      api.post("/admin/delete", {
+        'id': market.id
+      }).then(function (res) {
+        _this.getAllMarkets();
+      }); //bus.$emit('deleteMarket', market);
     }
-  }
+  })
 });
 
 /***/ }),
@@ -5156,11 +5165,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this2.address_lat = market.address_latitude;
       _this2.address_long = market.address_longitude;
       _this2.updateReceived = true;
-    });
-    _app__WEBPACK_IMPORTED_MODULE_2__["bus"].$on('deleteMarket', function (market) {
-      api.post("/admin/delete", market.id).then(function (res) {
-        that.getAllMarkets();
-      });
     });
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(["getAllMarkets"])), {}, {
@@ -104171,18 +104175,27 @@ var render = function() {
               ])
             ]),
             _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-success m-2",
-                on: {
-                  click: function($event) {
-                    return _vm.viewMarket(i)
-                  }
-                }
-              },
-              [_vm._v("View Market")]
-            )
+            _vm.deleting != market.id
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success m-2",
+                    on: {
+                      click: function($event) {
+                        return _vm.viewMarket(i)
+                      }
+                    }
+                  },
+                  [_vm._v("View Market")]
+                )
+              : _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary m-2",
+                    attrs: { disabled: "" }
+                  },
+                  [_vm._v("Deleting Market ...")]
+                )
           ])
         ])
       }),

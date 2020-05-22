@@ -159,13 +159,6 @@ export default {
       this.address_long = market.address_longitude;
       this.updateReceived = true;
     });
-    bus.$on('deleteMarket', (market) => {
-         api
-        .post(`/admin/delete`, market.id)
-        .then(res => {
-          that.getAllMarkets();
-        });
-    });
   },
   methods: {
     ...mapActions(["getAllMarkets"]),

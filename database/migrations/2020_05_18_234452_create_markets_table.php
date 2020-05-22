@@ -18,7 +18,7 @@ class CreateMarketsTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('category');
-            $table->foreignId('category_id')->constrained('food_categories');
+            $table->foreignId('category_id')->constrained('food_categories')->onDelete('cascade');;
             $table->string('address_address')->nullable();
             $table->double('address_latitude')->nullable();
             $table->double('address_longitude')->nullable();

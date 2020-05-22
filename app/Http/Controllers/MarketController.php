@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MarketRequest;
 use App\Http\Requests\SearchMarketRequest;
 use App\Http\Requests\UpdateMarketRequest;
+use App\Http\Requests\DeleteMarketRequest;
 use App\Services\CreateMarketService;
 use App\Services\GetMarketService;
 use App\Services\SearchMarketService;
 use App\Services\UpdateMarketService;
+use App\Services\DeleteMarketService;
 use Illuminate\Http\Request;
 
 class MarketController extends Controller
@@ -37,23 +39,9 @@ class MarketController extends Controller
         return response()->json(['error' => false, 'data' => $markets]);
     }
 
-    public function show(Market $market)
+    public function deleteMarket(DeleteMarketRequest $request)
     {
-        //
-    }
-
-    public function edit(Market $market)
-    {
-        //
-    }
-
-    public function update(Request $request, Market $market)
-    {
-        //
-    }
-
-    public function destroy(Market $market)
-    {
-        //
+        $create = (new DeleteMarketService())->run($request);
+        return response()->json(200);
     }
 }

@@ -8,7 +8,8 @@
             {{ truncateText(market.description) }}
           </p>
         </div>
-        <button class="btn btn-success m-2" @click="viewMarket(i)">View Market</button>
+        <button v-if="deleting != market.id" class="btn btn-success m-2" @click="viewMarket(i)">View Market</button>
+        <button v-else class="btn btn-secondary m-2" disabled>Deleting Market ...</button>
       </div>
     </div>
     <el-dialog v-if="currentMarket" :visible.sync="marketDialogVisible" width="40%">
@@ -31,13 +32,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { bus } from '../app'
 export default {
   name: 'all-markets',
   data() {
     return {
       marketDialogVisible: false,
+      deleting: '',
       currentMarket: '',
     };
   },
@@ -48,6 +50,7 @@ export default {
     this.$store.dispatch('getAllMarkets');
   },
   methods: {
+    ...mapActions(["getAllMarkets"]),
     truncateText(text) {
       if (text.length > 24) {
         return `${text.substr(0, 24)}...`;
@@ -65,7 +68,13 @@ export default {
     },
     deleteMarket(market) {
       this.marketDialogVisible = false;
-      bus.$emit('deleteMarket', market);
+      this.deleting = market.id;
+      api
+        .post(`/admin/delete`, {'id' : market.id})
+        .then(res => {
+          this.getAllMarkets();
+        });
+      //bus.$emit('deleteMarket', market);
     },
   },
 }
