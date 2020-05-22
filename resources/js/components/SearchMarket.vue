@@ -40,10 +40,11 @@
         <div class="ui segment"  style="min-height:500px; overflow:scroll">
             <div class="ui divided items" v-if="markets.length > 0">
                 <div class="item" v-for="market in markets" :key="market.id">
-                    <div class="content">
+                    <div class="content card">
                         <div class="header">{{market.name}}</div>
                         <div class="meta">{{market.description}}</div>
                         <div v-if="market.distance">{{ market.distance.toString().substring(0, 6) }}km</div>
+                        <img v-for="image in market.images" :key="image.id" class="img-responsive" :src="image.url" height="100vh" width="100vw" alt="Chania">
                     </div>
                 </div>
             </div>

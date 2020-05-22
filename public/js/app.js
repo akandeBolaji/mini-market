@@ -5406,6 +5406,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -104796,24 +104797,43 @@ var render = function() {
               { staticClass: "ui divided items" },
               _vm._l(_vm.markets, function(market) {
                 return _c("div", { key: market.id, staticClass: "item" }, [
-                  _c("div", { staticClass: "content" }, [
-                    _c("div", { staticClass: "header" }, [
-                      _vm._v(_vm._s(market.name))
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "meta" }, [
-                      _vm._v(_vm._s(market.description))
-                    ]),
-                    _vm._v(" "),
-                    market.distance
-                      ? _c("div", [
-                          _vm._v(
-                            _vm._s(market.distance.toString().substring(0, 6)) +
-                              "km"
-                          )
-                        ])
-                      : _vm._e()
-                  ])
+                  _c(
+                    "div",
+                    { staticClass: "content card" },
+                    [
+                      _c("div", { staticClass: "header" }, [
+                        _vm._v(_vm._s(market.name))
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "meta" }, [
+                        _vm._v(_vm._s(market.description))
+                      ]),
+                      _vm._v(" "),
+                      market.distance
+                        ? _c("div", [
+                            _vm._v(
+                              _vm._s(
+                                market.distance.toString().substring(0, 6)
+                              ) + "km"
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm._l(market.images, function(image) {
+                        return _c("img", {
+                          key: image.id,
+                          staticClass: "img-responsive",
+                          attrs: {
+                            src: image.url,
+                            height: "100vh",
+                            width: "100vw",
+                            alt: "Chania"
+                          }
+                        })
+                      })
+                    ],
+                    2
+                  )
                 ])
               }),
               0
