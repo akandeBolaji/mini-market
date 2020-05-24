@@ -1,24 +1,22 @@
 <template>
-    <nav id="nav">
-        <ul>
+  <div>
             <!--UNLOGGED-->
-            <li v-if="!$auth.check()" v-for="(route, key) in routes.unlogged" v-bind:key="route.path">
+            <span v-if="!$auth.check()" v-for="(route, key) in routes.unlogged" v-bind:key="route.path">
                 <router-link  :to="{ name : route.path }" :key="key">
                     {{route.name}}
                 </router-link>
-            </li>
+            </span>
             <!--LOGGED Admin-->
-            <li v-if="$auth.check()" v-for="(route, key) in routes.user" v-bind:key="route.path">
+            <span v-if="$auth.check()" v-for="(route, key) in routes.user" v-bind:key="route.path">
                 <router-link  :to="{ name : route.path }" :key="key">
-                    {{route.name}}
+                    {{route.name}} |
                 </router-link>
-            </li>
+            </span>
             <!--LOGOUT-->
-            <li v-if="$auth.check()">
+            <span v-if="$auth.check()">
                 <a href="#" @click.prevent="$auth.logout()">Logout</a>
-            </li>
-        </ul>
-    </nav>
+            </span>
+  </div>
 </template>
 <script>
   export default {

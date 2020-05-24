@@ -1,25 +1,29 @@
 <template>
-    <div class="container">
-        <div class="card card-default">
-            <div class="card-header">Admin Login</div>
-            <div class="card-body">
-                <div class="alert alert-danger" v-if="has_error">
-                    <p>An error occured, please try again.</p>
+    <main class="container">
+        <div class="row justify-content-center" style="height: 100vh">
+            <section class="col-md-8">
+            <div class="card card-default mt-5">
+                <div class="card-header">Admin Login</div>
+                <div class="card-body">
+                    <div class="alert alert-danger" v-if="has_error">
+                        <p>An error occured, please try again.</p>
+                    </div>
+                    <form autocomplete="off" @submit.prevent="login" method="post">
+                        <div class="form-group">
+                            <label for="InputEmail">Email address</label>
+                            <input type="email" class="form-control" id="InputEmail" aria-describedby="emailHelp" placeholder="test@theagromall.com" v-model="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password" v-model="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
-                <form autocomplete="off" @submit.prevent="login" method="post">
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email" class="form-control" placeholder="admin@example.com" v-model="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" class="form-control" v-model="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </form>
             </div>
+        </section>
         </div>
-    </div>
+    </main>
 </template>
 <script>
   export default {

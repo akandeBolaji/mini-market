@@ -27,6 +27,13 @@ export default new Vuex.Store({
     setSearch(state, response) {
         state.search = response.data.data;
     },
+    marketFound(state, market) {
+        state.markets = market;
+    },
+  },
+  getters: {
+    market: state => state.markets,
+
   },
   strict: debug
 });

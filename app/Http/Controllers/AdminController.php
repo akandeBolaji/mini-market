@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use Auth;
-use App\User;
 
 class AdminController extends Controller
 {

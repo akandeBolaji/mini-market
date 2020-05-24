@@ -1,13 +1,13 @@
 <template>
     <div id="main">
-        <header id="header">
-             <h1>
+        <nav class="navbar navbar-light bg-light justify-content-between">
+            <a class="navbar-brand h1">
                 <router-link :to="{name: 'home'}">
                     Mini Market
                 </router-link>
-            </h1>
-            <navigationMenu></navigationMenu>
-        </header>
+            </a>
+            <navigationMenu class="mr-sm-2"></navigationMenu>
+        </nav>
         <router-view></router-view>
     </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-    <div class="six wide column container">
+    <div class="container">
         <div
         v-if="status_msg"
         :class="{ 'alert-success': status, 'alert-danger': !status }"
@@ -19,7 +19,7 @@
             <div class="field" v-if="type != 'Nearest'">
             <div class="ui right icon input large">
                 <input type="text" placeholder="Enter search term" v-model="search" />
-                <i class="dot circle link icon green"></i>
+                <i class="dot circle link icon blue"></i>
             </div>
             </div>
             <div class="field">
@@ -34,24 +34,9 @@
                 </select>
             </div>
             </div>
-            <button class="ui button green" @click="findMarket">Find Market</button>
+            <button class="ui button blue" @click="findMarket">Find Market</button>
         </div>
         </form>
-        <div class="ui segment"  style="min-height:500px; overflow:scroll">
-            <div class="ui divided items" v-if="markets.length > 0">
-                <div class="item" v-for="market in markets" :key="market.id">
-                    <div class="content card">
-                        <div class="header">{{market.name}}</div>
-                        <div class="meta">{{market.description}}</div>
-                        <div v-if="market.distance">{{ market.distance.toString().substring(0, 6) }}km</div>
-                        <img v-for="image in market.images" :key="image.id" class="img-responsive" :src="image.url" height="100vh" width="100vw" alt="Chania">
-                    </div>
-                </div>
-            </div>
-            <div v-else>
-                No Results Founds
-            </div>
-        </div>
     </div>
 
 </template>
@@ -113,6 +98,7 @@ export default {
                 .then(res => {
                     this.markets = res.data.data;
                     console.log(this.markets);
+                    this.$store.commit('marketFound', {market: this.markets});
                     this.$emit('addToMap', {
                         'lat' : this.lat,
                         'lng' : this.lng,
