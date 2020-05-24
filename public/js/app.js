@@ -5212,13 +5212,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }).then(function (res) {
         _this3.name = _this3.description = _this3.address = _this3.category = "";
         _this3.status = true;
+        var notify;
 
-        _this3.showNotification("Market Successfully Created");
+        if (_this3.updateReceived) {
+          notify = "Market Successfully Updated";
+        } else {
+          notify = "Market Successfully Created";
+        }
+
+        _this3.showNotification(notify);
 
         _this3.isCreatingMarket = false;
         _this3.isUpdatingMarket = false;
         _this3.updateReceived = false;
         _this3.imageList = [];
+        _this3.updateImage = [];
         /*
          this.getAllPosts() can be used here as well
          note: "that" has been assigned the value of "this" at the top
@@ -11988,7 +11996,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n@media only screen and (max-width: 600px)  {\n.dialog[data-v-563740e2] {\n        width: 100%;\n}\n}\n@media only screen and (min-width: 600px)  {\n.dialog[data-v-563740e2] {\n        width: 40%;\n}\n}\n", ""]);
+exports.push([module.i, "\n@media only screen and (max-width: 600px)  {\n.dialog[data-v-563740e2] {\n        width: 100%;\n}\n}\n", ""]);
 
 // exports
 
@@ -104319,8 +104327,7 @@ var render = function() {
         ? _c(
             "el-dialog",
             {
-              staticClass: "dialog",
-              attrs: { visible: _vm.marketDialogVisible },
+              attrs: { visible: _vm.marketDialogVisible, width: "40%" },
               on: {
                 "update:visible": function($event) {
                   _vm.marketDialogVisible = $event

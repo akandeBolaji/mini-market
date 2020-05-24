@@ -210,11 +210,19 @@ export default {
         .then(res => {
           this.name = this.description = this.address = this.category = "";
           this.status = true;
-          this.showNotification("Market Successfully Created");
+          let notify;
+          if (this.updateReceived) {
+            notify = "Market Successfully Updated";
+          }
+          else {
+            notify = "Market Successfully Created";
+          }
+          this.showNotification(notify);
           this.isCreatingMarket = false;
           this.isUpdatingMarket = false;
           this.updateReceived = false;
           this.imageList = [];
+          this.updateImage = [];
           /*
            this.getAllPosts() can be used here as well
            note: "that" has been assigned the value of "this" at the top
