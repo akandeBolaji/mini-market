@@ -1,6 +1,6 @@
 <template>
     <div>
-        <searchMarket @addDefault="addDefaultLocation($event)" @addToMap="readMap($event)" class="mt-3"/>
+        <searchMarket @addToMap="readMap($event)" class="mt-3"/>
         <div class="row mt-3">
             <div class="col-md-6 mb-4" v-if="markets" v-for="market in markets" :key="market.id">
                 <div class="card bg-light mx-3">
@@ -70,27 +70,6 @@
                                         </div>`);
                 infowindow.open(map, marker);
             })
-        },
-
-        addDefaultLocation(data) {
-            // var map = new google.maps.Map(this.$refs['map'], {
-            // zoom: 15,
-            // center: new google.maps.LatLng(data.lat, data.lng),
-            // mapTypeId: google.maps.MapTypeId.ROADMAP,
-            // mapTypeControl: false
-            // });
-
-            // const lat = data.lat;
-            // const lng = data.lng;
-            // let marker = new google.maps.Marker({
-            //     position: new google.maps.LatLng(lat, lng),
-            //     map: map
-            // });
-            // var infowindow = new google.maps.InfoWindow();
-            // infowindow.setContent(`<div class="ui header">Your location</div>`);
-            // infowindow.open(map, marker);
-
-
         },
     }
   }

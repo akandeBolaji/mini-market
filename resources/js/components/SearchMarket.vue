@@ -34,7 +34,9 @@
                 </select>
             </div>
             </div>
-            <button class="ui button blue" @click="findMarket">Find Market</button>
+            <button class="ui button blue" @click="findMarket">
+                {{ isFinding ? "Searching..." :  "Find Market" }}
+            </button>
         </div>
         </form>
     </div>
@@ -44,6 +46,7 @@
 export default {
     data() {
         return {
+        isFinding: false,
         lat: 0,
         lng: 0,
         search: '',
@@ -66,19 +69,13 @@ export default {
 
     methods: {
         getUserLocation() {
-            console.log('hi');
             navigator.geolocation.getCurrentPosition(
             position => {
                 this.lat = position.coords.latitude;
                 this.lng = position.coords.longitude;
-                this.$emit('addDefault', {
-                    'lat' : this.lat,
-                    'lng' : this.lng
-                });
-                console.log('hi',this.lng, this.lat);
             },
             error => {
-                console.log("Error getting location");
+                // console.log("Error getting location");
             }
             );
         },
@@ -87,6 +84,7 @@ export default {
             if (!this.validateForm()) {
                 return false;
             }
+            this.isFinding = true;
             api
                 .post("/search", {
                     'search': this.search,
@@ -96,8 +94,12 @@ export default {
                     'lng': this.lng
                 })
                 .then(res => {
+                    this.isFinding = false;
                     this.markets = res.data.data;
-                    console.log(this.markets);
+                    if (this.markets.length < 0) {
+                        this.showNotification("No Market Found");
+                    }
+                    //console.log(this.markets);
                     this.$store.commit('marketFound', {market: this.markets});
                     this.$emit('addToMap', {
                         'lat' : this.lat,
@@ -105,8 +107,9 @@ export default {
                         'markets': this.markets,
                     });
                 }).catch(error => {
+                    this.isFinding = false;
                     this.showNotification("A server error");
-                    console.log(error.message);
+                    //console.log(error.message);
                 });
         },
         validateForm() {
