@@ -105011,6 +105011,7 @@ var render = function() {
     "div",
     [
       _c("searchMarket", {
+        staticClass: "mt-3",
         on: {
           addDefault: function($event) {
             return _vm.addDefaultLocation($event)
@@ -105021,10 +105022,12 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _vm._l(_vm.markets, function(market) {
-        return _vm.markets
-          ? _c("div", { key: market.id, staticClass: "row" }, [
-              _c("div", { staticClass: "col-md-6 mb-4" }, [
+      _c(
+        "div",
+        { staticClass: "row mt-3" },
+        _vm._l(_vm.markets, function(market) {
+          return _vm.markets
+            ? _c("div", { key: market.id, staticClass: "col-md-6 mb-4" }, [
                 _c("div", { staticClass: "card bg-light mx-3" }, [
                   _c("div", { staticClass: "card-title h1 mx-3" }, [
                     _vm._v(_vm._s(market.name))
@@ -105068,11 +105071,12 @@ var render = function() {
                   )
                 ])
               ])
-            ])
-          : _vm._e()
-      })
+            : _vm._e()
+        }),
+        0
+      )
     ],
-    2
+    1
   )
 }
 var staticRenderFns = []

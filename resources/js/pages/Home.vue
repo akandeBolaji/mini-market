@@ -1,8 +1,8 @@
 <template>
     <div>
-        <searchMarket @addDefault="addDefaultLocation($event)" @addToMap="readMap($event)"/>
-        <div class="row" v-if="markets" v-for="market in markets" :key="market.id">
-            <div class="col-md-6 mb-4">
+        <searchMarket @addDefault="addDefaultLocation($event)" @addToMap="readMap($event)" class="mt-3"/>
+        <div class="row mt-3">
+            <div class="col-md-6 mb-4" v-if="markets" v-for="market in markets" :key="market.id">
                 <div class="card bg-light mx-3">
                     <div class="card-title h1 mx-3">{{market.name}}</div>
                     <div class="card-title h4 mx-3">{{market.description}}</div>
