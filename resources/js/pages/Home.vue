@@ -3,7 +3,7 @@
         <searchMarket @addDefault="addDefaultLocation($event)" @addToMap="readMap($event)"/>
         <div class="row" v-if="markets" v-for="market in markets" :key="market.id">
             <div class="col-md-6 mb-4">
-                <div class="card bg-primary text-white m-3">
+                <div class="card bg-secondary text-white m-3">
                     <div class="card-title h1">{{market.name}}</div>
                     <div class="card-title h4">{{market.description}}</div>
                     <div class="card-subtitle mb-2"> {{market.category}} | {{market.address_address}} </div>

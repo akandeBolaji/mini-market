@@ -48,8 +48,17 @@
           />
         </div>
         <div class>
-         <label v-if="updateReceived" for="exampleFormControlInput1">Update Images</label>
-         <label v-else for="exampleFormControlInput1">Sample Images</label>
+        <section v-if="updateReceived">
+         <label for="exampleFormControlInput1">Update Images</label>
+        <div class="row">
+          <div class="col-md-3 mx-2 img-wrap" v-for="(img, i) in updateImage" :key=i>
+            <span class="close" @click="deleteImage(i)">&times;</span>
+            <img :src="img.url" class="img-thumbnail" alt="">
+          </div>
+        </div>
+        </section>
+        <section v-if="!updateReceived">
+         <label for="exampleFormControlInput1">Sample Images</label>
           <el-upload
             action="https://jsonplaceholder.typicode.com/posts/"
             list-type="picture-card"
@@ -63,6 +72,7 @@
           <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt />
           </el-dialog>
+          </section>
         </div>
       </form>
     </div>
@@ -76,32 +86,6 @@
   </div>
 </template>
 
-<style>
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-</style>
-
 <script>
 import { setTimeout } from "timers";
 import { mapState, mapActions } from "vuex";
@@ -114,6 +98,7 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       imageList: [],
+      updateImage: [],
       status_msg: "",
       status: "",
       isCreatingMarket: false,
@@ -157,11 +142,16 @@ export default {
       this.formatted_address = market.address_address;
       this.address_lat = market.address_latitude;
       this.address_long = market.address_longitude;
+      this.updateImage = market.images;
       this.updateReceived = true;
     });
   },
   methods: {
     ...mapActions(["getAllMarkets"]),
+    deleteImage(index) {
+        this.updateImage.splice(index, 1);
+    },
+
     checkAddress(address) {
         //console.log('auto', this.autocomplete);
     },
@@ -266,3 +256,56 @@ export default {
   }
 };
 </script>
+<style>
+    .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+    }
+    .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+    }
+    .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+    }
+    .img-wrap {
+    position: relative;
+    display: inline-block;
+    border: 1px black solid;
+    font-size: 0;
+    }
+
+    .img-wrap .close {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 100;
+    background-color: #FFF;
+    padding: 5px 2px 2px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: .2;
+    text-align: center;
+    font-size: 22px;
+    line-height: 10px;
+    border-radius: 50%;
+    }
+
+    .img-wrap:hover .close {
+    opacity: 1;
+    }
+</style>
+

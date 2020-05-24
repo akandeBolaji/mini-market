@@ -12,7 +12,7 @@
         <button v-else class="btn btn-secondary m-2" disabled>Deleting Market ...</button>
       </div>
     </div>
-    <el-dialog v-if="currentMarket" :visible.sync="marketDialogVisible" width="40%">
+    <el-dialog v-if="currentMarket" :visible.sync="marketDialogVisible" class="dialog" width="40%">
       <span>
         <h3>{{ currentMarket.name }}</h3>
         <div class="row">
@@ -79,3 +79,17 @@ export default {
   },
 }
 </script>
+<style scoped>
+    @media only screen and (max-width: 600px)  {
+        .dialog {
+            width: 100%;
+        }
+    }
+
+        @media only screen and (max-width: 600px)  {
+        .dialog {
+            width: 40%;
+        }
+    }
+</style>
+
