@@ -3,14 +3,14 @@
         <searchMarket @addDefault="addDefaultLocation($event)" @addToMap="readMap($event)"/>
         <div class="row" v-if="markets" v-for="market in markets" :key="market.id">
             <div class="col-md-6 mb-4">
-                <div class="card bg-secondary text-white m-3">
-                    <div class="card-title h1">{{market.name}}</div>
-                    <div class="card-title h4">{{market.description}}</div>
-                    <div class="card-subtitle mb-2"> {{market.category}} | {{market.address_address}} </div>
-                    <div class="card-subtitle mb-2" v-if="market.distance">{{ market.distance.toString().substring(0, 6) }}km</div>
+                <div class="card bg-light mx-3">
+                    <div class="card-title h1 mx-3">{{market.name}}</div>
+                    <div class="card-title h4 mx-3">{{market.description}}</div>
+                    <div class="card-subtitle mb-2 mx-3"> {{market.category}} | {{market.address_address}} </div>
+                    <div class="card-subtitle mb-2 mx-3" v-if="market.distance">{{ market.distance.toString().substring(0, 6) }}km</div>
                     <div class="card-body card-body-cascade text-center">
-                        <div :id="market.id" :ref="market.id" class="z-depth-1-half map-container-5" style="height: 300px">
-                        </div>
+                    <div :id="market.id" :ref="market.id" class="z-depth-1-half map-container-5" style="height: 300px">
+                    </div>
                     </div>
                 </div>
 

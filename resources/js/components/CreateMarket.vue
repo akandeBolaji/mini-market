@@ -106,6 +106,7 @@ export default {
       acceptImage: true,
       id: '',
       name: "",
+      updateReceived: false,
       description: "",
       category: "",
       address: "",
@@ -143,6 +144,7 @@ export default {
       this.address_lat = market.address_latitude;
       this.address_long = market.address_longitude;
       this.updateImage = market.images;
+      this.updateReceived = true;
       this.acceptImage = false;
     });
   },
@@ -151,10 +153,10 @@ export default {
     deleteImage(index, img) {
         this.acceptImage = true;
         this.updateImage.splice(index, 1);
-        this.deleteImage(img);
+        this.deleteImageData(img);
     },
 
-    deleteImage(image) {
+    deleteImageData(image) {
         api
         .post(`/admin/image/delete`, image)
         .then(res => {
@@ -250,7 +252,8 @@ export default {
         this.showNotification("Market category cannot be empty");
         return false;
       }
-      if (this.imageList.length != 3 && (!this.updateReceived && this.imageList.length > 3) ) {
+      if ((this.imageList.length != 3 && this.updateReceived == false) || ((this.imageList.length + this.updateImage.length) != 3) ) {
+
         this.status = false;
         this.showNotification("Sample Images must be three");
         return false;

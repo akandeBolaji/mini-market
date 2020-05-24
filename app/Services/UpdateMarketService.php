@@ -30,9 +30,9 @@ class UpdateMarketService
                 'address_latitude' => $address_lat,
                 'address_longitude' => $address_long
             ]);
-            if ($images && $images->length > 0)
+            if ($images)
             {
-                $storeImage = $this->storeImages($images, $market->id, $user->email);
+                $storeImage = $this->storeImages($images, $request->id, $user->email);
             }
             return $market;
         });
