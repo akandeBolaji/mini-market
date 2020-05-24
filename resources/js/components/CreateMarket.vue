@@ -48,16 +48,16 @@
           />
         </div>
         <div class>
-        <section v-if="updateReceived">
+        <section v-if="updateImage.length > 0">
          <label for="exampleFormControlInput1">Update Images</label>
         <div class="row">
           <div class="col-md-3 mx-2 img-wrap" v-for="(img, i) in updateImage" :key=i>
-            <span class="close" @click="deleteImage(i)">&times;</span>
+            <span class="close" @click="deleteImage(i, img)">&times;</span>
             <img :src="img.url" class="img-thumbnail" alt="">
           </div>
         </div>
         </section>
-        <section v-if="!updateReceived">
+        <section v-if="acceptImage">
          <label for="exampleFormControlInput1">Sample Images</label>
           <el-upload
             action="https://jsonplaceholder.typicode.com/posts/"
@@ -103,7 +103,7 @@ export default {
       status: "",
       isCreatingMarket: false,
       isUpdatingMarket: false,
-      updateReceived: false,
+      acceptImage: true,
       id: '',
       name: "",
       description: "",
@@ -143,18 +143,28 @@ export default {
       this.address_lat = market.address_latitude;
       this.address_long = market.address_longitude;
       this.updateImage = market.images;
-      this.updateReceived = true;
+      this.acceptImage = false;
     });
   },
   methods: {
     ...mapActions(["getAllMarkets"]),
-    deleteImage(index) {
+    deleteImage(index, img) {
+        this.acceptImage = true;
         this.updateImage.splice(index, 1);
+        this.deleteImage(img);
     },
 
-    checkAddress(address) {
-        //console.log('auto', this.autocomplete);
+    deleteImage(image) {
+        api
+        .post(`/admin/image/delete`, image)
+        .then(res => {
+          //okay
+        })
+        .catch(err => {
+            //catch error
+        })
     },
+
     updateImageList(file) {
       this.imageList.push(file.raw);
     },

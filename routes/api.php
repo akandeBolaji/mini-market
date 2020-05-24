@@ -33,6 +33,7 @@ Route::prefix('admin')->group(function () {
         Route::post('create', 'MarketController@createMarket')->name('create.market');
         Route::post('update', 'MarketController@updateMarket')->name('update.market');
         Route::post('delete', 'MarketController@deleteMarket')->name('delete.market');
+        Route::post('/image/delete', 'ImageController@deleteImage')->name('delete.image');
         Route::get('get_all', 'MarketController@getAllMarkets')->name('fetch.markets');
     });
 });

@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\Market;
+use App\Models\Image;
 use DB;
 
-class DeleteMarketService
+class DeleteImageService
 {
     public function run($request)
     {
         DB::transaction(function () use ($request) {
-            $market = Market::find($request->id)->delete();
+            $image = Image::find($request->id)->delete();
             return true;
         });
     }

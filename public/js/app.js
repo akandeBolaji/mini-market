@@ -4998,6 +4998,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../app */ "./resources/js/app.js");
+var _objectSpread2;
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -5108,7 +5110,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       status: "",
       isCreatingMarket: false,
       isUpdatingMarket: false,
-      updateReceived: false,
+      acceptImage: true,
       id: '',
       name: "",
       description: "",
@@ -5150,128 +5152,127 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       _this2.address_lat = market.address_latitude;
       _this2.address_long = market.address_longitude;
       _this2.updateImage = market.images;
-      _this2.updateReceived = true;
+      _this2.acceptImage = false;
     });
   },
-  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(["getAllMarkets"])), {}, {
-    deleteImage: function deleteImage(index) {
+  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(["getAllMarkets"])), {}, (_objectSpread2 = {
+    deleteImage: function deleteImage(index, img) {
+      this.acceptImage = true;
       this.updateImage.splice(index, 1);
-    },
-    checkAddress: function checkAddress(address) {//console.log('auto', this.autocomplete);
-    },
-    updateImageList: function updateImageList(file) {
-      this.imageList.push(file.raw);
-    },
-    handlePictureCardPreview: function handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.imageList.push(file);
-      this.dialogVisible = true;
-    },
-    createMarket: function createMarket(e) {
-      var _this3 = this;
-
-      e.preventDefault();
-
-      if (!this.validateForm()) {
-        return false;
-      }
-
-      var that = this;
-
-      if (this.updateReceived) {
-        this.isUpdatingMarket = true;
-        this.isCreatingMarket = false;
-      } else {
-        this.isCreatingMarket = true;
-        this.isUpdatingMarket = true;
-      }
-
-      var formData = new FormData();
-      formData.append("id", this.id);
-      formData.append("name", this.name);
-      formData.append("description", this.description);
-      formData.append("category", this.category);
-      formData.append("address", this.address);
-      formData.append("address_lat", this.address_lat);
-      formData.append("address_long", this.address_long);
-      $.each(this.imageList, function (key, image) {
-        formData.append("images[".concat(key, "]"), image);
-      });
-      var endpoint = this.updateReceived ? 'update' : 'create';
-      api.post("/admin/".concat(endpoint), formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      }).then(function (res) {
-        _this3.name = _this3.description = _this3.address = _this3.category = "";
-        _this3.status = true;
-
-        _this3.showNotification("Market Successfully Created");
-
-        _this3.isCreatingMarket = false;
-        _this3.isUpdatingMarket = false;
-        _this3.updateReceived = false;
-        _this3.imageList = [];
-        /*
-         this.getAllPosts() can be used here as well
-         note: "that" has been assigned the value of "this" at the top
-         to avoid context related issues.
-         */
-
-        that.getAllMarkets();
-        that.componentKey += 1;
-      });
-    },
-    validateForm: function validateForm() {
-      //no vaildation for images - it is needed
-      if (!this.name) {
-        this.status = false;
-        this.showNotification("Market name cannot be empty");
-        return false;
-      }
-
-      if (!this.description) {
-        this.status = false;
-        this.showNotification("Market description cannot be empty");
-        return false;
-      }
-
-      if (!this.address) {
-        this.status = false;
-        this.showNotification("Market address cannot be empty");
-        return false;
-      }
-
-      if (!this.address_lat || !this.address_long || this.address != this.formatted_address) {
-        console.log(this.address_lat, this.address_long, this.address, this.formatted_address);
-        this.status = false;
-        this.showNotification("Market address not known");
-        return false;
-      }
-
-      if (!this.category) {
-        this.status = false;
-        this.showNotification("Market category cannot be empty");
-        return false;
-      }
-
-      if (this.imageList.length != 3 && !this.updateReceived && this.imageList.length > 3) {
-        this.status = false;
-        this.showNotification("Sample Images must be three");
-        return false;
-      }
-
-      return true;
-    },
-    showNotification: function showNotification(message) {
-      var _this4 = this;
-
-      this.status_msg = message;
-      Object(timers__WEBPACK_IMPORTED_MODULE_0__["setTimeout"])(function () {
-        _this4.status_msg = "";
-      }, 3000);
+      this.deleteImage(img);
     }
-  })
+  }, _defineProperty(_objectSpread2, "deleteImage", function deleteImage(image) {
+    api.post("/admin/image/delete", image).then(function (res) {//okay
+    })["catch"](function (err) {//catch error
+    });
+  }), _defineProperty(_objectSpread2, "updateImageList", function updateImageList(file) {
+    this.imageList.push(file.raw);
+  }), _defineProperty(_objectSpread2, "handlePictureCardPreview", function handlePictureCardPreview(file) {
+    this.dialogImageUrl = file.url;
+    this.imageList.push(file);
+    this.dialogVisible = true;
+  }), _defineProperty(_objectSpread2, "createMarket", function createMarket(e) {
+    var _this3 = this;
+
+    e.preventDefault();
+
+    if (!this.validateForm()) {
+      return false;
+    }
+
+    var that = this;
+
+    if (this.updateReceived) {
+      this.isUpdatingMarket = true;
+      this.isCreatingMarket = false;
+    } else {
+      this.isCreatingMarket = true;
+      this.isUpdatingMarket = true;
+    }
+
+    var formData = new FormData();
+    formData.append("id", this.id);
+    formData.append("name", this.name);
+    formData.append("description", this.description);
+    formData.append("category", this.category);
+    formData.append("address", this.address);
+    formData.append("address_lat", this.address_lat);
+    formData.append("address_long", this.address_long);
+    $.each(this.imageList, function (key, image) {
+      formData.append("images[".concat(key, "]"), image);
+    });
+    var endpoint = this.updateReceived ? 'update' : 'create';
+    api.post("/admin/".concat(endpoint), formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    }).then(function (res) {
+      _this3.name = _this3.description = _this3.address = _this3.category = "";
+      _this3.status = true;
+
+      _this3.showNotification("Market Successfully Created");
+
+      _this3.isCreatingMarket = false;
+      _this3.isUpdatingMarket = false;
+      _this3.updateReceived = false;
+      _this3.imageList = [];
+      /*
+       this.getAllPosts() can be used here as well
+       note: "that" has been assigned the value of "this" at the top
+       to avoid context related issues.
+       */
+
+      that.getAllMarkets();
+      that.componentKey += 1;
+    });
+  }), _defineProperty(_objectSpread2, "validateForm", function validateForm() {
+    //no vaildation for images - it is needed
+    if (!this.name) {
+      this.status = false;
+      this.showNotification("Market name cannot be empty");
+      return false;
+    }
+
+    if (!this.description) {
+      this.status = false;
+      this.showNotification("Market description cannot be empty");
+      return false;
+    }
+
+    if (!this.address) {
+      this.status = false;
+      this.showNotification("Market address cannot be empty");
+      return false;
+    }
+
+    if (!this.address_lat || !this.address_long || this.address != this.formatted_address) {
+      console.log(this.address_lat, this.address_long, this.address, this.formatted_address);
+      this.status = false;
+      this.showNotification("Market address not known");
+      return false;
+    }
+
+    if (!this.category) {
+      this.status = false;
+      this.showNotification("Market category cannot be empty");
+      return false;
+    }
+
+    if (this.imageList.length != 3 && !this.updateReceived && this.imageList.length > 3) {
+      this.status = false;
+      this.showNotification("Sample Images must be three");
+      return false;
+    }
+
+    return true;
+  }), _defineProperty(_objectSpread2, "showNotification", function showNotification(message) {
+    var _this4 = this;
+
+    this.status_msg = message;
+    Object(timers__WEBPACK_IMPORTED_MODULE_0__["setTimeout"])(function () {
+      _this4.status_msg = "";
+    }, 3000);
+  }), _objectSpread2))
 });
 
 /***/ }),
@@ -104557,7 +104558,7 @@ var render = function() {
         ]),
         _vm._v(" "),
         _c("div", {}, [
-          _vm.updateReceived
+          _vm.updateImage.length > 0
             ? _c("section", [
                 _c("label", { attrs: { for: "exampleFormControlInput1" } }, [
                   _vm._v("Update Images")
@@ -104577,7 +104578,7 @@ var render = function() {
                             staticClass: "close",
                             on: {
                               click: function($event) {
-                                return _vm.deleteImage(i)
+                                return _vm.deleteImage(i, img)
                               }
                             }
                           },
@@ -104596,7 +104597,7 @@ var render = function() {
               ])
             : _vm._e(),
           _vm._v(" "),
-          !_vm.updateReceived
+          _vm.acceptImage
             ? _c(
                 "section",
                 [
