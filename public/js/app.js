@@ -104249,7 +104249,7 @@ var render = function() {
               ? _c(
                   "button",
                   {
-                    staticClass: "btn btn-success m-2",
+                    staticClass: "btn btn-primary m-2",
                     on: {
                       click: function($event) {
                         return _vm.viewMarket(i)
@@ -104570,7 +104570,7 @@ var render = function() {
       _c(
         "button",
         {
-          staticClass: "btn btn-success",
+          staticClass: "btn btn-primary",
           attrs: { type: "button" },
           on: { click: _vm.createMarket }
         },

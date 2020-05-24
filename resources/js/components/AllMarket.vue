@@ -8,7 +8,7 @@
             {{ truncateText(market.description) }}
           </p>
         </div>
-        <button v-if="deleting != market.id" class="btn btn-success m-2" @click="viewMarket(i)">View Market</button>
+        <button v-if="deleting != market.id" class="btn btn-primary m-2" @click="viewMarket(i)">View Market</button>
         <button v-else class="btn btn-secondary m-2" disabled>Deleting Market ...</button>
       </div>
     </div>

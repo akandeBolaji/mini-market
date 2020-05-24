@@ -70,7 +70,7 @@
       <button
         type="button"
         @click="createMarket"
-        class="btn btn-success"
+        class="btn btn-primary"
       >{{ isCreatingMarket ? "Creating..." : isUpdatingMarket ? "Updating..." : updateReceived ? "Update Market" : "Create Market" }}</button>
     </div>
   </div>
