@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Market;
+use DB;
 
 class SearchMarketService
 {
