@@ -30,7 +30,8 @@ class SearchMarketService
 
     protected function getDistance($latitude, $longitude, $radius)
     {
-        $markets = Market::getNearBy($latitude, $longitude);
+        $markets = Market::select(['*', DB::raw('( 0.621371 * 3959 * acos( cos( radians('.$latitude.') ) * cos( radians( address_latitude ) ) * cos( radians( address_longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians(address_latitude) ) ) ) AS distance')])->havingRaw('distance < 500')->orderBy("distance")->with('images')->get();
+        //$markets = Market::getNearBy($latitude, $longitude, $radius);
         return $markets;
     }
 
