@@ -18,7 +18,7 @@ class SearchMarketService
         }
         else
         {
-            $markets = $this->getDistance($request->lat, $request->lng, $request->radius);
+            $markets = $this->getDistance($request->lat, $request->lng);
         }
         return $markets;
     }
@@ -28,9 +28,9 @@ class SearchMarketService
         return Market::with('images')->whereLike($field, $parameter)->orderBy('created_at', 'desc')->get();
     }
 
-    protected function getDistance($latitude, $longitude, $radius)
+    protected function getDistance($latitude, $longitude)
     {
-        $markets = Market::select(['*', DB::raw('( 0.621371 * 3959 * acos( cos( radians('.$latitude.') ) * cos( radians( address_latitude ) ) * cos( radians( address_longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians(address_latitude) ) ) ) AS distance')])->havingRaw('distance < 500')->orderBy("distance")->with('images')->get();
+        $markets = Market::select(['*', DB::raw('( 0.621371 * 3959 * acos( cos( radians('.$latitude.') ) * cos( radians( address_latitude ) ) * cos( radians( address_longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians(address_latitude) ) ) ) AS distance')])->orderBy("distance")->with('images')->get();
         //$markets = Market::getNearBy($latitude, $longitude, $radius);
         return $markets;
     }
