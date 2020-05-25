@@ -22,7 +22,10 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::post('search', 'MarketController@searchMarket')->name('search.markets');
+Route::prefix('search')->group(function () {
+    Route::post('/', 'MarketController@searchMarket')->name('search.markets');
+
+});
 
 Route::prefix('admin')->group(function () {
     Route::post('login', 'AdminController@login');

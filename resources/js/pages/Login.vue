@@ -17,7 +17,9 @@
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" placeholder="Password" v-model="password" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" :disabled='submit' class="btn btn-primary">
+                            {{ submit ? "Sending..." :  "Submit" }}
+                        </button>
                     </form>
                 </div>
             </div>
@@ -31,7 +33,8 @@
       return {
         email: null,
         password: null,
-        has_error: false
+        has_error: false,
+        submit: false
       }
     },
     mounted() {
@@ -40,6 +43,7 @@
     methods: {
       login() {
         // get the redirect object
+        this.submit = true;
         var redirect = this.$auth.redirect()
         var app = this
         this.$auth.login({
